@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Contacts</string>
+    <string name="create_contact">Create Contact</string>
+    <string name="title_label">If a title, such as “Mr.”</string>
+    <string name="title">Title (optional)</string>
+    <string name="full_name_label">The full name of the contact.</string>
+    <string name="full_name">Full Name</string>
+    <string name="family_name_label">Last name</string>
+    <string name="family_name">Family Name</string>
+    <string name="given_name_label">First name</string>
+    <string name="given_name">Given Name</string>
+    <string name="birthday_label" tools:ignore="TypographyDashes">e.g. “06–02-1994”</string>
+    <string name="birthday">Birthday</string>
+    <string name="gender_label">Male, Female, or Other</string>
+    <string name="gender">Gender</string>
+    <string name="occupation">Occupation (optional)</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="phone_number_type_label">e.g. “Home” or “Work”</string>
+    <string name="phone_number_type">Phone Number Type</string>
+    <string name="street">Street</string>
+    <string name="city">City</string>
+    <string name="region_label">(e.g. “NY”) or Province</string>
+    <string name="region">Region</string>
+    <string name="neighborhood">Neighborhood (optional)</string>
+    <string name="post_code">Post Code</string>
+    <string name="po_box">PO Box (optional)</string>
+    <string name="country">Country</string>
+    <string name="postal_address_type_label">e.g. “Home” or “Work”</string>
+    <string name="postal_address_type">Postal Address Type</string>
+    <string name="save_contact">Save Contact</string>
+    <string name="all_fields_must_be_completed">All fields must be completed</string>
+    <string name="contact_created">Contact created</string>
+</resources>
