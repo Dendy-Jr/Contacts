@@ -9,7 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,9 +22,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.launch
 import ui.dendi.contacts.R
-import ui.dendi.contacts.core.UiText
+import ui.dendi.contacts.core.UiEvent
 import ui.dendi.contacts.presentation.screen.GradientButton
 
 @Composable
@@ -40,7 +39,6 @@ fun CreateContactScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -170,8 +168,19 @@ fun CreateContactScreen(
             spacer = 16.dp,
         )
 
-        val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
+        LaunchedEffect(key1 = true) {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is UiEvent.Success -> { // TODO
+                    }
+                    is UiEvent.ShowSnackbar -> {
+                        snackbarHostState.showSnackbar(event.message.asString(context))
+                    }
+                }
+            }
+        }
+
         val gradient =
             Brush.horizontalGradient(listOf(Color(0xFF4109A1), Color(0xFF4195E2)))
 
@@ -182,22 +191,7 @@ fun CreateContactScreen(
             fontWeight = FontWeight.Bold,
             gradient = gradient
         ) {
-            viewModel.insertPerson()
-            val isError = viewModel.isError
-            if (isError) {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = UiText.StringResource(R.string.all_fields_must_be_completed)
-                            .asString(context)
-                    )
-                }
-            } else {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = UiText.StringResource(R.string.contact_created).asString(context)
-                    )
-                }
-            }
+            viewModel.onSaveButtonClick()
         }
     }
 }

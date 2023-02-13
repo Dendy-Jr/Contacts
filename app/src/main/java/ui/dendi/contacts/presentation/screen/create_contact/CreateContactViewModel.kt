@@ -6,7 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import ui.dendi.contacts.R
+import ui.dendi.contacts.core.UiEvent
+import ui.dendi.contacts.core.UiText
 import ui.dendi.contacts.domain.ContactsRepository
 import ui.dendi.contacts.domain.Person
 import ui.dendi.contacts.domain.PhoneNumber
@@ -17,6 +22,9 @@ import javax.inject.Inject
 class CreateContactViewModel @Inject constructor(
     private val repository: ContactsRepository,
 ) : ViewModel() {
+
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     var title by mutableStateOf("")
         private set
@@ -51,9 +59,6 @@ class CreateContactViewModel @Inject constructor(
     var country by mutableStateOf("")
         private set
     var postalAddressType by mutableStateOf("")
-        private set
-
-    var isError by mutableStateOf(true)
         private set
 
     fun updateTitle(title: String) {
@@ -124,36 +129,45 @@ class CreateContactViewModel @Inject constructor(
         this.postalAddressType = postalAddressType
     }
 
-    fun insertPerson() {
+    fun onSaveButtonClick() {
         viewModelScope.launch {
-            isError = isFieldsEmpty()
-            if (isError) return@launch
-            repository.insertContact(
-                Person(
-                    title = title,
-                    fullName = fullName,
-                    familyName = familyName,
-                    givenName = givenName,
-                    gender = gender,
-                    birthday = birthday,
-                    occupation = occupation,
-                    phoneNumber = PhoneNumber(
-                        phoneNumber = phoneNumber,
-                        type = phoneNumberType,
-                    ),
-                    postalAddress = PostalAddress(
-                        street = street,
-                        city = city,
-                        region = region,
-                        neighborhood = neighborhood,
-                        postCode = postCode,
-                        poBox = poBox,
-                        country = country,
-                        type = postalAddressType,
-                    )
+            if (isFieldsEmpty()) {
+                _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.all_fields_must_be_completed)))
+                return@launch
+            } else {
+                insertContact()
+                _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.contact_created)))
+                _uiEvent.send(UiEvent.Success)
+            }
+        }
+    }
+
+    private suspend fun insertContact() {
+        repository.insertContact(
+            Person(
+                title = title,
+                fullName = fullName,
+                familyName = familyName,
+                givenName = givenName,
+                gender = gender,
+                birthday = birthday,
+                occupation = occupation,
+                phoneNumber = PhoneNumber(
+                    phoneNumber = phoneNumber,
+                    type = phoneNumberType,
+                ),
+                postalAddress = PostalAddress(
+                    street = street,
+                    city = city,
+                    region = region,
+                    neighborhood = neighborhood,
+                    postCode = postCode,
+                    poBox = poBox,
+                    country = country,
+                    type = postalAddressType,
                 )
             )
-        }
+        )
     }
 
     private fun isFieldsEmpty(): Boolean {
