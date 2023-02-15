@@ -12,10 +12,7 @@ import kotlinx.coroutines.launch
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.UiEvent
 import ui.dendi.contacts.core.UiText
-import ui.dendi.contacts.domain.ContactsRepository
-import ui.dendi.contacts.domain.Person
-import ui.dendi.contacts.domain.PhoneNumber
-import ui.dendi.contacts.domain.PostalAddress
+import ui.dendi.contacts.domain.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,9 +27,9 @@ class CreateContactViewModel @Inject constructor(
         private set
     var fullName by mutableStateOf("")
         private set
-    var familyName by mutableStateOf("")
+    var lastName by mutableStateOf("")
         private set
-    var givenName by mutableStateOf("")
+    var firstName by mutableStateOf("")
         private set
     var gender by mutableStateOf("")
         private set
@@ -40,10 +37,14 @@ class CreateContactViewModel @Inject constructor(
         private set
     var occupation by mutableStateOf("")
         private set
+
     var phoneNumber by mutableStateOf("")
+        private set
+    var phoneNumberLabel by mutableStateOf("")
         private set
     var phoneNumberType by mutableStateOf("")
         private set
+
     var street by mutableStateOf("")
         private set
     var city by mutableStateOf("")
@@ -54,11 +55,43 @@ class CreateContactViewModel @Inject constructor(
         private set
     var postCode by mutableStateOf("")
         private set
-    var poBox by mutableStateOf("")
-        private set
     var country by mutableStateOf("")
         private set
+    var postalAddressLabel by mutableStateOf("")
+        private set
     var postalAddressType by mutableStateOf("")
+        private set
+
+    var emailAddress by mutableStateOf("")
+        private set
+    var emailAddressType by mutableStateOf("")
+        private set
+    var emailAddressLabel by mutableStateOf("")
+        private set
+
+    var organizationName by mutableStateOf("")
+        private set
+    var organizationLabel by mutableStateOf("")
+        private set
+    var jobTitle by mutableStateOf("")
+        private set
+    var jobDescription by mutableStateOf("")
+        private set
+    var department by mutableStateOf("")
+        private set
+
+    var websiteLink by mutableStateOf("")
+        private set
+    var websiteLabel by mutableStateOf("")
+        private set
+    var websiteType by mutableStateOf("")
+        private set
+
+    var calendarLink by mutableStateOf("")
+        private set
+    var calendarLabel by mutableStateOf("")
+        private set
+    var calendarType by mutableStateOf("")
         private set
 
     fun updateTitle(title: String) {
@@ -69,12 +102,12 @@ class CreateContactViewModel @Inject constructor(
         this.fullName = fullName
     }
 
-    fun updateFamilyName(familyName: String) {
-        this.familyName = familyName
+    fun updateLastName(lastName: String) {
+        this.lastName = lastName
     }
 
-    fun updateGivenName(givenName: String) {
-        this.givenName = givenName
+    fun updateFirstName(firstName: String) {
+        this.firstName = firstName
     }
 
     fun updateGender(gender: String) {
@@ -91,6 +124,10 @@ class CreateContactViewModel @Inject constructor(
 
     fun updatePhoneNumber(phoneNumber: String) {
         this.phoneNumber = phoneNumber
+    }
+
+    fun updatePhoneNumberLabel(phoneNumberLabel: String) {
+        this.phoneNumberLabel = phoneNumberLabel
     }
 
     fun updatePhoneNumberType(phoneNumberType: String) {
@@ -117,43 +154,97 @@ class CreateContactViewModel @Inject constructor(
         this.postCode = postCode
     }
 
-    fun updatePoBox(poBox: String) {
-        this.poBox = poBox
-    }
-
     fun updateCountry(country: String) {
         this.country = country
+    }
+
+    fun updatePostalAddressLabel(postalAddressLabel: String) {
+        this.postalAddressLabel = postalAddressLabel
     }
 
     fun updatePostalAddressType(postalAddressType: String) {
         this.postalAddressType = postalAddressType
     }
 
+    fun updateEmailAddress(emailAddress: String) {
+        this.emailAddress = emailAddress
+    }
+
+    fun updateEmailAddressType(emailAddressType: String) {
+        this.emailAddressType = emailAddressType
+    }
+
+    fun updateEmailAddressLabel(emailAddressLabel: String) {
+        this.emailAddressLabel = emailAddressLabel
+    }
+
+    fun updateOrganizationName(organizationName: String) {
+        this.organizationName = organizationName
+    }
+
+    fun updateOrganizationLabel(organizationLabel: String) {
+        this.organizationLabel = organizationLabel
+    }
+
+    fun updateJobTitle(jobTitle: String) {
+        this.jobTitle = jobTitle
+    }
+
+    fun updateJobDescription(jobDescription: String) {
+        this.jobDescription = jobDescription
+    }
+
+    fun updateDepartment(department: String) {
+        this.department = department
+    }
+
+    fun updateWebsiteLink(websiteLink: String) {
+        this.websiteLink = websiteLink
+    }
+
+    fun updateWebsiteLabel(websiteLabel: String) {
+        this.websiteLabel = websiteLabel
+    }
+
+    fun updateWebsiteType(websiteType: String) {
+        this.websiteType = websiteType
+    }
+
+    fun updateCalendarLink(calendarLink: String) {
+        this.calendarLink = calendarLink
+    }
+
+    fun updateCalendarLabel(calendarLabel: String) {
+        this.calendarLabel = calendarLabel
+    }
+
+    fun updateCalendarType(calendarType: String) {
+        this.calendarType = calendarType
+    }
+
     fun onSaveButtonClick() {
         viewModelScope.launch {
-            if (isFieldsEmpty()) {
-                _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.all_fields_must_be_completed)))
-                return@launch
-            } else {
-                insertContact()
-                _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.contact_created)))
-                _uiEvent.send(UiEvent.Success)
-            }
+            insertContact()
+            _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.contact_created)))
+            _uiEvent.send(UiEvent.Success)
         }
     }
+
+    fun showSaveContactBtn(): Boolean = firstName.isNotBlank()
 
     private suspend fun insertContact() {
         repository.insertContact(
             Person(
                 title = title,
                 fullName = fullName,
-                familyName = familyName,
-                givenName = givenName,
+                lastName = lastName,
+                firstName = firstName,
                 gender = gender,
                 birthday = birthday,
                 occupation = occupation,
                 phoneNumber = PhoneNumber(
                     phoneNumber = phoneNumber,
+                    label = phoneNumberLabel,
                     type = phoneNumberType,
                 ),
                 postalAddress = PostalAddress(
@@ -162,29 +253,29 @@ class CreateContactViewModel @Inject constructor(
                     region = region,
                     neighborhood = neighborhood,
                     postCode = postCode,
-                    poBox = poBox,
                     country = country,
+                    label = postalAddressLabel,
                     type = postalAddressType,
-                )
+                ),
+                emailAddress = EmailAddress(
+                    emailAddress = emailAddress,
+                    type = emailAddressType,
+                    label = emailAddressLabel,
+                ),
+                organization = Organization(
+                    organizationName = organizationName,
+                    label = organizationLabel,
+                    jobTitle = jobTitle,
+                    jobDescription = jobDescription,
+                    department = department,
+                ),
+                website = Website(link = websiteLink, label = websiteLabel, type = websiteType),
+                calendar = Calendar(
+                    calendarLink = calendarLink,
+                    label = calendarLabel,
+                    type = calendarType,
+                ),
             )
         )
-    }
-
-    private fun isFieldsEmpty(): Boolean {
-        return listOf(
-            fullName,
-            familyName,
-            givenName,
-            gender,
-            birthday,
-            phoneNumber,
-            phoneNumberType,
-            street,
-            city,
-            region,
-            postCode,
-            country,
-            postalAddressType,
-        ).any { it.isBlank() }
     }
 }

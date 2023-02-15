@@ -20,19 +20,24 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun GradientButton(
+    modifier: Modifier = Modifier,
     text: String,
     textColor: Color = Color.Black,
     fontSize: TextUnit = 18.sp,
     gradient: Brush,
     fontWeight: FontWeight = FontWeight.Normal,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     Button(
+        modifier = modifier.padding(vertical = 18.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         ),
         contentPadding = PaddingValues(),
-        onClick = { onClick() })
+        onClick = { onClick() },
+        enabled = enabled,
+    )
     {
         Box(
             modifier = Modifier

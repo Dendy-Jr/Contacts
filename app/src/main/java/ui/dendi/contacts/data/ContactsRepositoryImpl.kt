@@ -6,10 +6,7 @@ import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.ObjectId
-import ui.dendi.contacts.domain.ContactsRepository
-import ui.dendi.contacts.domain.Person
-import ui.dendi.contacts.domain.PhoneNumber
-import ui.dendi.contacts.domain.PostalAddress
+import ui.dendi.contacts.domain.*
 import javax.inject.Inject
 
 class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRepository {
@@ -37,8 +34,9 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         }
     }
 
-    private fun PhoneNumberObject.toPhoneNumber(): PhoneNumber =
-        PhoneNumber(phoneNumber = phoneNumber, type = type)
+    private fun PhoneNumberObject.toPhoneNumber(): PhoneNumber {
+        return PhoneNumber(phoneNumber = phoneNumber, label = label, type = type)
+    }
 
     private fun PostalAddressObject.toPostalAddress() = PostalAddress(
         street = street,
@@ -46,23 +44,45 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         region = region,
         neighborhood = neighborhood,
         postCode = postCode,
-        poBox = poBox,
         country = country,
+        label = label,
         type = type,
     )
 
+    private fun EmailAddressObject.toEmailAddress(): EmailAddress {
+        return EmailAddress(emailAddress = emailAddress, type = type, label = label)
+    }
+
+    private fun OrganizationObject.toOrganization(): Organization {
+        return Organization(
+            organizationName = organizationName,
+            label = label,
+            jobTitle = jobTitle,
+            jobDescription = jobDescription,
+            department = department,
+        )
+    }
+
+    private fun WebsiteObject.toWebsite(): Website {
+        return Website(link = link, label = label, type = type)
+    }
+
+    private fun CalendarObject.toCalendar(): Calendar {
+        return Calendar(calendarLink = calendarLink, label = label, type = type)
+    }
+
     private fun PersonObject.toPerson(): Person {
         return Person(
-//            id = id.toString(),
             title = title,
             fullName = fullName,
-            familyName = familyName,
-            givenName = givenName,
+            lastName = lastName,
+            firstName = firstName,
             gender = gender,
             birthday = birthday,
             occupation = occupation,
             phoneNumber = phoneNumber?.toPhoneNumber() ?: PhoneNumber(
                 phoneNumber = "",
+                label = "",
                 type = "",
             ),
             postalAddress = postalAddress?.toPostalAddress() ?: PostalAddress(
@@ -71,15 +91,57 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
                 region = "",
                 neighborhood = "",
                 postCode = "",
-                poBox = "",
                 country = "",
+                label = "",
                 type = "",
             ),
+            emailAddress = emailAddress?.toEmailAddress() ?: EmailAddress(
+                emailAddress = "",
+                type = "",
+                label = "",
+            ),
+            organization = organization?.toOrganization() ?: Organization(
+                organizationName = "",
+                label = "",
+                jobTitle = "",
+                jobDescription = "",
+                department = "",
+            ),
+            website = website?.toWebsite() ?: Website(link = "", label = "", type = ""),
+            calendar = calendar?.toCalendar() ?: Calendar(calendarLink = "", label = "", type = ""),
         )
     }
 
+    private fun Calendar.toCalendarObject() = CalendarObject().apply {
+        calendarLink = this@toCalendarObject.calendarLink
+        label = this@toCalendarObject.label
+        type = this@toCalendarObject.type
+    }
+
+    private fun Website.toWebsiteObject() = WebsiteObject().apply {
+        link = this@toWebsiteObject.link
+        label = this@toWebsiteObject.label
+        type = this@toWebsiteObject.type
+    }
+
+    private fun Organization.toOrganizationObject() = OrganizationObject().apply {
+        organizationName = this@toOrganizationObject.organizationName
+        label = this@toOrganizationObject.label
+        jobTitle = this@toOrganizationObject.jobTitle
+        jobDescription = this@toOrganizationObject.jobDescription
+        department = this@toOrganizationObject.department
+    }
+
+    private fun EmailAddress.toEmailAddressObject(): EmailAddressObject =
+        EmailAddressObject().apply {
+            emailAddress = this@toEmailAddressObject.emailAddress
+            type = this@toEmailAddressObject.type
+            label = this@toEmailAddressObject.label
+        }
+
     private fun PhoneNumber.toPhoneNumberObject(): PhoneNumberObject = PhoneNumberObject().apply {
         phoneNumber = this@toPhoneNumberObject.phoneNumber
+        label = this@toPhoneNumberObject.label
         type = this@toPhoneNumberObject.type
     }
 
@@ -89,8 +151,8 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         region = this@toPostalAddressObject.region
         neighborhood = this@toPostalAddressObject.neighborhood
         postCode = this@toPostalAddressObject.postCode
-        poBox = this@toPostalAddressObject.poBox
         country = this@toPostalAddressObject.country
+        label = this@toPostalAddressObject.label
         type = this@toPostalAddressObject.type
     }
 
@@ -98,14 +160,17 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         return PersonObject().apply {
             title = this@toPersonObject.title
             fullName = this@toPersonObject.fullName
-            familyName = this@toPersonObject.familyName
-            givenName = this@toPersonObject.givenName
+            lastName = this@toPersonObject.lastName
+            firstName = this@toPersonObject.firstName
             gender = this@toPersonObject.gender
             birthday = this@toPersonObject.birthday
             occupation = this@toPersonObject.occupation
             phoneNumber = this@toPersonObject.phoneNumber.toPhoneNumberObject()
             postalAddress = this@toPersonObject.postalAddress.toPostalAddressObject()
+            emailAddress = this@toPersonObject.emailAddress.toEmailAddressObject()
+            organization = this@toPersonObject.organization.toOrganizationObject()
+            website = this@toPersonObject.website.toWebsiteObject()
+            calendar = this@toPersonObject.calendar.toCalendarObject()
         }
     }
 }
-

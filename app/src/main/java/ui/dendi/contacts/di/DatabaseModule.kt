@@ -22,6 +22,10 @@ object DatabaseModule {
                 PersonObject::class,
                 PhoneNumberObject::class,
                 PostalAddressObject::class,
+                EmailAddressObject::class,
+                OrganizationObject::class,
+                WebsiteObject::class,
+                CalendarObject::class,
             )
         )
             .compactOnLaunch()
