@@ -6,6 +6,7 @@ data class Person(
     val lastName: String,
     val firstName: String,
     val gender: String,
+    val imagePath: String,
     val birthday: String,
     val occupation: String,
     val phoneNumber: PhoneNumber,

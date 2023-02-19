@@ -1,37 +1,48 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package ui.dendi.contacts.presentation.screen.create_contact
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.UiEvent
+import ui.dendi.contacts.presentation.screen.create_contact.components.*
 
 @Composable
 fun CreateContactScreen(
     modifier: Modifier = Modifier,
-    viewModel: CreateContactViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState,
+    onDoneClick: () -> Unit,
+    onCancelClick: () -> Unit,
+    viewModel: CreateContactViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = modifier
@@ -39,15 +50,98 @@ fun CreateContactScreen(
             .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
-        Text(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 28.dp),
-            textAlign = TextAlign.Center,
-            text = stringResource(R.string.create_contact),
-            fontSize = 36.sp,
-            fontWeight = FontWeight.ExtraBold,
-        )
+                .padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+
+            ) {
+            val titleTextSize: TextUnit = 24.sp
+            val iconSize: Dp = with(LocalDensity.current) {
+                titleTextSize.toDp()
+            }
+
+            IconButton(
+                modifier = Modifier.size(iconSize),
+                onClick = {
+                    onCancelClick()
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_cancel),
+                    contentDescription = null,
+                )
+            }
+            Text(
+                modifier = Modifier.weight(1F),
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.new_contact),
+                fontSize = titleTextSize,
+                fontWeight = FontWeight.SemiBold,
+            )
+            IconButton(
+                modifier = Modifier.size(iconSize),
+                enabled = viewModel.showDoneButton(),
+                onClick = {
+                    viewModel.onSaveButtonClick()
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_done),
+                    contentDescription = null,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(56.dp))
+
+        var selectedImageUri by remember {
+            mutableStateOf<Uri?>(null)
+        }
+        val photoPickerLauncher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+                onResult = { uri -> selectedImageUri = uri })
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
+                painter = selectedImageUri?.let {
+                    Log.d("AAAA", it.toString())
+                    viewModel.updateImagePath(it.toString())
+                    rememberAsyncImagePainter(it)
+                } ?: painterResource(
+                    id = R.drawable.ic_add_photo
+                ),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+            )
+            TextButton(
+                onClick = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+            ) {
+                Text(
+                    text = stringResource(R.string.add_photo),
+                    fontSize = 16.sp,
+                    color = Color.Blue,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(35.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -65,19 +159,20 @@ fun CreateContactScreen(
                     value = viewModel.firstName,
                     onTextChanged = viewModel::updateFirstName,
                     isError = viewModel.firstName.isBlank(),
-                    placeholder = { Text(text = stringResource(R.string.first_name)) },
+                    placeholderResId = R.string.first_name,
                 )
                 IconEndField(onClick = {
                     showCollapsedMainFields = showCollapsedMainFields.not()
                 }, showCollapsedFields = { showCollapsedMainFields })
             }
-            TextFieldItem(
+            MandatoryTextFieldItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 30.dp),
                 value = viewModel.lastName,
                 onTextChanged = viewModel::updateLastName,
-                placeholder = { Text(text = stringResource(R.string.last_name)) },
+                isError = viewModel.lastName.isBlank(),
+                placeholderResId = R.string.last_name,
             )
 
             if (showCollapsedMainFields) {
@@ -85,7 +180,7 @@ fun CreateContactScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -103,7 +198,7 @@ fun CreateContactScreen(
                     modifier = Modifier.weight(1F),
                     value = viewModel.phoneNumber,
                     onTextChanged = viewModel::updatePhoneNumber,
-                    placeholder = { Text(text = stringResource(R.string.phone_number)) },
+                    placeholderResId = R.string.phone_number,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 )
                 IconEndField(onClick = {
@@ -115,7 +210,7 @@ fun CreateContactScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -133,26 +228,18 @@ fun CreateContactScreen(
                     modifier = Modifier.weight(1F),
                     value = viewModel.street,
                     onTextChanged = viewModel::updateStreet,
-                    placeholder = { Text(text = stringResource(R.string.street)) },
+                    placeholderResId = R.string.street,
                 )
                 IconEndField(onClick = {
                     showCollapsedPostalAddressFields = showCollapsedPostalAddressFields.not()
                 }, showCollapsedFields = { showCollapsedPostalAddressFields })
             }
-            TextFieldItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp),
-                value = viewModel.city,
-                onTextChanged = viewModel::updateCity,
-                placeholder = { Text(text = stringResource(R.string.city)) },
-            )
             if (showCollapsedPostalAddressFields) {
                 CollapsedPostalAddressTextFields(viewModel)
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -160,7 +247,7 @@ fun CreateContactScreen(
             var showCollapsedEmailAddressFields by remember {
                 mutableStateOf(false)
             }
-            TextSectionTitle(textId = R.string.email_address)
+            TextSectionTitle(textId = R.string.email_address_title)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -170,7 +257,7 @@ fun CreateContactScreen(
                     modifier = Modifier.weight(1F),
                     value = viewModel.emailAddress,
                     onTextChanged = viewModel::updateEmailAddress,
-                    placeholder = { Text(text = stringResource(R.string.link)) },
+                    placeholderResId = R.string.link,
                 )
                 IconEndField(onClick = {
                     showCollapsedEmailAddressFields = showCollapsedEmailAddressFields.not()
@@ -181,7 +268,7 @@ fun CreateContactScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -199,7 +286,7 @@ fun CreateContactScreen(
                     modifier = Modifier.weight(1F),
                     value = viewModel.organizationName,
                     onTextChanged = viewModel::updateOrganizationName,
-                    placeholder = { Text(text = stringResource(R.string.organization_name)) },
+                    placeholderResId = R.string.organization_name,
                 )
                 IconEndField(onClick = {
                     showCollapsedOrganizationFields = showCollapsedOrganizationFields.not()
@@ -210,7 +297,7 @@ fun CreateContactScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -218,7 +305,7 @@ fun CreateContactScreen(
             var showCollapsedWebsiteFields by remember {
                 mutableStateOf(false)
             }
-            TextSectionTitle(textId = R.string.website)
+            TextSectionTitle(textId = R.string.website_title)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -228,7 +315,7 @@ fun CreateContactScreen(
                     modifier = Modifier.weight(1F),
                     value = viewModel.websiteLink,
                     onTextChanged = viewModel::updateWebsiteLink,
-                    placeholder = { Text(text = stringResource(R.string.link)) },
+                    placeholderResId = R.string.link,
                 )
                 IconEndField(onClick = {
                     showCollapsedWebsiteFields = showCollapsedWebsiteFields.not()
@@ -239,7 +326,7 @@ fun CreateContactScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -247,7 +334,7 @@ fun CreateContactScreen(
             var showCollapsedCalendarFields by remember {
                 mutableStateOf(false)
             }
-            TextSectionTitle(textId = R.string.calendar)
+            TextSectionTitle(textId = R.string.calendar_title)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -257,7 +344,7 @@ fun CreateContactScreen(
                     modifier = Modifier.weight(1F),
                     value = viewModel.calendarLink,
                     onTextChanged = viewModel::updateCalendarLink,
-                    placeholder = { Text(text = stringResource(R.string.link)) },
+                    placeholderResId = R.string.link,
                 )
                 IconEndField(onClick = {
                     showCollapsedCalendarFields = showCollapsedCalendarFields.not()
@@ -272,9 +359,7 @@ fun CreateContactScreen(
         LaunchedEffect(key1 = true) {
             viewModel.uiEvent.collect { event ->
                 when (event) {
-                    is UiEvent.Success -> {
-                        // TODO In future, navigate to `Contacts Screen`
-                    }
+                    is UiEvent.Success -> onDoneClick()
                     is UiEvent.ShowSnackbar -> {
                         snackbarHostState.showSnackbar(event.message.asString(context))
                     }
@@ -286,14 +371,14 @@ fun CreateContactScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 18.dp),
-            enabled = viewModel.showSaveContactBtn(),
+            enabled = viewModel.showDoneButton(),
             onClick = {
                 viewModel.onSaveButtonClick()
             },
         ) {
             Text(
-                text = stringResource(R.string.save_contact),
-                fontSize = 24.sp,
+                text = stringResource(R.string.done),
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -301,46 +386,16 @@ fun CreateContactScreen(
 }
 
 @Composable
-private fun IconStartField(iconResId: Int) {
-    Icon(
-        modifier = Modifier.size(25.dp),
-        painter = painterResource(id = iconResId),
-        contentDescription = null,
-    )
-}
-
-@Composable
-fun IconEndField(onClick: () -> Unit, showCollapsedFields: () -> Boolean) {
-    Icon(
-        modifier = Modifier
-            .size(25.dp)
-            .clickable { onClick() },
-        painter = painterResource(id = if (showCollapsedFields.invoke()) R.drawable.ic_arrow_top else R.drawable.ic_arrow_bottom),
-        contentDescription = null,
-    )
-}
-
-@Composable
-private fun TextSectionTitle(textId: Int) {
-    Text(
-        modifier = Modifier.padding(start = 30.dp),
-        text = stringResource(textId),
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Medium,
-    )
-}
-
-@Composable
 fun CollapsedCalendarTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
         value = viewModel.calendarLabel,
         onTextChanged = viewModel::updateCalendarLabel,
-        placeholder = { Text(text = stringResource(R.string.label)) },
+        placeholderResId = R.string.label,
     )
     CollapsedTextFieldItem(
         value = viewModel.calendarType,
         onTextChanged = viewModel::updateCalendarType,
-        placeholder = { Text(text = stringResource(R.string.type)) },
+        placeholderResId = R.string.type,
     )
 }
 
@@ -349,12 +404,12 @@ fun CollapsedWebsiteTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
         value = viewModel.websiteLabel,
         onTextChanged = viewModel::updateWebsiteLabel,
-        placeholder = { Text(text = stringResource(R.string.label)) },
+        placeholderResId = R.string.label,
     )
     CollapsedTextFieldItem(
         value = viewModel.websiteType,
         onTextChanged = viewModel::updateWebsiteType,
-        placeholder = { Text(text = stringResource(R.string.type)) },
+        placeholderResId = R.string.type,
     )
 }
 
@@ -363,22 +418,22 @@ fun CollapsedOrganizationTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
         value = viewModel.organizationLabel,
         onTextChanged = viewModel::updateOrganizationLabel,
-        placeholder = { Text(text = stringResource(R.string.label)) },
+        placeholderResId = R.string.label,
     )
     CollapsedTextFieldItem(
         value = viewModel.jobTitle,
         onTextChanged = viewModel::updateJobTitle,
-        placeholder = { Text(text = stringResource(R.string.job_title)) },
+        placeholderResId = R.string.job_title,
     )
     CollapsedTextFieldItem(
         value = viewModel.jobDescription,
         onTextChanged = viewModel::updateJobDescription,
-        placeholder = { Text(text = stringResource(R.string.job_description)) },
+        placeholderResId = R.string.job_description,
     )
     CollapsedTextFieldItem(
         value = viewModel.department,
         onTextChanged = viewModel::updateDepartment,
-        placeholder = { Text(text = stringResource(R.string.department)) },
+        placeholderResId = R.string.department,
     )
 }
 
@@ -387,12 +442,12 @@ fun CollapsedPhoneTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
         value = viewModel.phoneNumberLabel,
         onTextChanged = viewModel::updatePhoneNumberLabel,
-        placeholder = { Text(text = stringResource(R.string.label)) },
+        placeholderResId = R.string.label,
     )
     CollapsedTextFieldItem(
         value = viewModel.phoneNumberType,
         onTextChanged = viewModel::updatePhoneNumberType,
-        placeholder = { Text(text = stringResource(R.string.type)) },
+        placeholderResId = R.string.type,
     )
 }
 
@@ -401,47 +456,52 @@ fun CollapsedEmailAddressTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
         value = viewModel.emailAddressLabel,
         onTextChanged = viewModel::updateEmailAddressLabel,
-        placeholder = { Text(text = stringResource(id = R.string.label)) },
+        placeholderResId = R.string.label,
     )
     CollapsedTextFieldItem(
         value = viewModel.emailAddressType,
         onTextChanged = viewModel::updateEmailAddressType,
-        placeholder = { Text(text = stringResource(id = R.string.type)) },
+        placeholderResId = R.string.type,
     )
 }
 
 @Composable
 fun CollapsedPostalAddressTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
+        value = viewModel.city,
+        onTextChanged = viewModel::updateCity,
+        placeholderResId = R.string.region,
+    )
+    CollapsedTextFieldItem(
         value = viewModel.region,
         onTextChanged = viewModel::updateRegion,
-        placeholder = { Text(text = stringResource(R.string.region)) },
+        placeholderResId = R.string.region,
     )
     CollapsedTextFieldItem(
         value = viewModel.neighborhood,
         onTextChanged = viewModel::updateNeighborhood,
-        placeholder = { Text(text = stringResource(R.string.neighborhood)) },
+        placeholderResId = R.string.neighborhood,
     )
     CollapsedTextFieldItem(
         value = viewModel.postCode,
         onTextChanged = viewModel::updatePostCode,
-        placeholder = { Text(text = stringResource(R.string.post_code)) },
+        placeholderResId = R.string.post_code,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
     CollapsedTextFieldItem(
         value = viewModel.country,
         onTextChanged = viewModel::updateCountry,
-        placeholder = { Text(text = stringResource(R.string.country)) },
+        placeholderResId = R.string.country,
     )
     CollapsedTextFieldItem(
         value = viewModel.postalAddressLabel,
         onTextChanged = viewModel::updatePostalAddressLabel,
-        placeholder = { Text(text = stringResource(R.string.label)) },
+        placeholderResId = R.string.label,
     )
     CollapsedTextFieldItem(
         value = viewModel.postalAddressType,
         onTextChanged = viewModel::updatePostalAddressType,
-        placeholder = { Text(text = stringResource(R.string.type)) },
+        placeholderResId = R.string.type,
     )
 }
 
@@ -450,131 +510,31 @@ private fun CollapsedMainTextFields(viewModel: CreateContactViewModel) {
     CollapsedTextFieldItem(
         value = viewModel.title,
         onTextChanged = viewModel::updateTitle,
-        placeholder = { Text(text = stringResource(R.string.title)) },
+        placeholderResId = R.string.title,
     )
 
     CollapsedTextFieldItem(
         value = viewModel.fullName,
         onTextChanged = viewModel::updateFullName,
-        placeholder = { Text(text = stringResource(R.string.full_name)) },
+        placeholderResId = R.string.full_name,
     )
 
     CollapsedTextFieldItem(
         value = viewModel.gender,
         onTextChanged = viewModel::updateGender,
-        placeholder = { Text(text = stringResource(R.string.gender)) },
+        placeholderResId = R.string.gender,
     )
 
     CollapsedTextFieldItem(
         value = viewModel.birthday,
         onTextChanged = viewModel::updateBirthday,
-        placeholder = { Text(text = stringResource(R.string.birthday)) },
+        placeholderResId = R.string.birthday,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
 
     CollapsedTextFieldItem(
         value = viewModel.occupation,
         onTextChanged = viewModel::updateOccupation,
-        placeholder = { Text(text = stringResource(R.string.occupation)) },
-    )
-}
-
-@Composable
-private fun MandatoryTextFieldItem(
-    modifier: Modifier = Modifier,
-    value: String,
-    onTextChanged: (String) -> Unit,
-    placeholder: @Composable () -> Unit,
-    isError: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-) {
-    OutlinedTextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onTextChanged,
-        placeholder = { placeholder.invoke() },
-        isError = isError,
-        trailingIcon = {
-            if (isError) {
-                Icon(
-                    Icons.Rounded.Error,
-                    "Error",
-                    tint = MaterialTheme.colorScheme.error,
-                )
-            } else if (value.isNotBlank()) {
-                IconButton(onClick = {
-                    onTextChanged("")
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "Clear",
-                    )
-                }
-            }
-        },
-        keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(percent = 15),
-    )
-}
-
-@Composable
-private fun TextFieldItem(
-    modifier: Modifier = Modifier,
-    value: String,
-    onTextChanged: (String) -> Unit,
-    placeholder: @Composable () -> Unit,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-) {
-    OutlinedTextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onTextChanged,
-        placeholder = { placeholder.invoke() },
-        trailingIcon = {
-            if (value.isNotBlank()) {
-                IconButton(onClick = {
-                    onTextChanged("")
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "Clear",
-                    )
-                }
-            }
-        },
-        keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(percent = 15),
-    )
-}
-
-@Composable
-private fun CollapsedTextFieldItem(
-    modifier: Modifier = Modifier,
-    value: String,
-    onTextChanged: (String) -> Unit,
-    placeholder: @Composable () -> Unit,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-) {
-    OutlinedTextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp),
-        value = value,
-        onValueChange = onTextChanged,
-        placeholder = { placeholder.invoke() },
-        trailingIcon = {
-            if (value.isNotBlank()) {
-                IconButton(onClick = {
-                    onTextChanged("")
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "Clear",
-                    )
-                }
-            }
-        },
-        keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(percent = 15),
+        placeholderResId = R.string.occupation,
     )
 }

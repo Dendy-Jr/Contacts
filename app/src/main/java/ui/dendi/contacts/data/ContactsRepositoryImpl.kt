@@ -78,6 +78,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
             lastName = lastName,
             firstName = firstName,
             gender = gender,
+            imagePath = imagePath,
             birthday = birthday,
             occupation = occupation,
             phoneNumber = phoneNumber?.toPhoneNumber() ?: PhoneNumber(
@@ -163,6 +164,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
             lastName = this@toPersonObject.lastName
             firstName = this@toPersonObject.firstName
             gender = this@toPersonObject.gender
+            imagePath = this@toPersonObject.imagePath
             birthday = this@toPersonObject.birthday
             occupation = this@toPersonObject.occupation
             phoneNumber = this@toPersonObject.phoneNumber.toPhoneNumberObject()

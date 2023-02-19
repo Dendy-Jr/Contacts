@@ -12,6 +12,7 @@ class PersonObject : RealmObject {
     var lastName: String = ""
     var firstName: String = ""
     var gender: String = ""
+    var imagePath: String = ""
     var birthday: String = ""
     var occupation: String = ""
     var phoneNumber: PhoneNumberObject? = null

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Contacts</string>
-    <string name="create_contact">Create Contact</string>
     <string name="title">Title</string>
     <string name="full_name">Full name</string>
     <string name="last_name">Last name</string>
@@ -15,13 +14,12 @@
     <string name="neighborhood">Neighborhood</string>
     <string name="post_code">Post code</string>
     <string name="country">Country</string>
-    <string name="save_contact">Save Contact</string>
     <string name="all_fields_must_be_completed">All fields must be completed</string>
     <string name="contact_created">Contact created</string>
     <string name="phone_number_title">Phone Number</string>
     <string name="postal_address_title">Postal Address</string>
     <string name="label">Label</string>
-    <string name="email_address">Email Address</string>
+    <string name="email_address_title">Email Address</string>
     <string name="type">Type</string>
     <string name="organization_name">Organization name</string>
     <string name="job_title">Job title</string>
@@ -29,6 +27,10 @@
     <string name="department">Department</string>
     <string name="link">Link</string>
     <string name="organization_title">Organization</string>
-    <string name="website">Website</string>
-    <string name="calendar">Calendar</string>
+    <string name="website_title">Website</string>
+    <string name="calendar_title">Calendar</string>
+    <string name="new_contact">New Contact</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="done">Done</string>
+    <string name="contacts_title">Contacts</string>
 </resources>

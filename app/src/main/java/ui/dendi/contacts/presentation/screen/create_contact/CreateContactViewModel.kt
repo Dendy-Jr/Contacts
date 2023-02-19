@@ -9,9 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import ui.dendi.contacts.R
 import ui.dendi.contacts.core.UiEvent
-import ui.dendi.contacts.core.UiText
 import ui.dendi.contacts.domain.*
 import javax.inject.Inject
 
@@ -32,6 +30,8 @@ class CreateContactViewModel @Inject constructor(
     var firstName by mutableStateOf("")
         private set
     var gender by mutableStateOf("")
+        private set
+    var imagePath by mutableStateOf("")
         private set
     var birthday by mutableStateOf("")
         private set
@@ -112,6 +112,10 @@ class CreateContactViewModel @Inject constructor(
 
     fun updateGender(gender: String) {
         this.gender = gender
+    }
+
+    fun updateImagePath(imagePath: String) {
+        this.imagePath = imagePath
     }
 
     fun updateBirthday(birthday: String) {
@@ -225,21 +229,21 @@ class CreateContactViewModel @Inject constructor(
     fun onSaveButtonClick() {
         viewModelScope.launch {
             insertContact()
-            _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(R.string.contact_created)))
             _uiEvent.send(UiEvent.Success)
         }
     }
 
-    fun showSaveContactBtn(): Boolean = firstName.isNotBlank()
+    fun showDoneButton(): Boolean = firstName.isNotBlank() && lastName.isNotBlank()
 
     private suspend fun insertContact() {
         repository.insertContact(
             Person(
                 title = title,
                 fullName = fullName,
-                lastName = lastName,
-                firstName = firstName,
+                lastName = lastName.trim(),
+                firstName = firstName.trim(),
                 gender = gender,
+                imagePath = imagePath,
                 birthday = birthday,
                 occupation = occupation,
                 phoneNumber = PhoneNumber(

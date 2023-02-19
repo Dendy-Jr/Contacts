@@ -11,7 +11,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ui.dendi.contacts.navigation.Route
+import ui.dendi.contacts.presentation.screen.contacts.ContactsScreen
 import ui.dendi.contacts.presentation.screen.create_contact.CreateContactScreen
 import ui.dendi.contacts.ui.theme.ContactsTheme
 
@@ -23,13 +28,34 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ContactsTheme {
+                val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                 ) {
-                    CreateContactScreen(snackbarHostState = snackbarHostState)
+                    NavHost(
+                        navController = navController,
+                        startDestination = Route.CONTACTS,
+                    ) {
+                        composable(Route.CONTACTS) {
+                            ContactsScreen(onNextClick = {
+                                navController.navigate(Route.CREATE_CONTACT)
+                            })
+                        }
+                        composable(Route.CREATE_CONTACT) {
+                            CreateContactScreen(
+                                snackbarHostState = snackbarHostState,
+                                onDoneClick = {
+                                    navController.navigate(Route.CONTACTS)
+                                },
+                                onCancelClick = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
