@@ -1,6 +1,9 @@
 package ui.dendi.contacts.domain
 
+import java.util.*
+
 data class Person(
+    val id: String = UUID.randomUUID().toString(),
     val title: String,
     val fullName: String,
     val lastName: String,
@@ -15,7 +18,18 @@ data class Person(
     val organization: Organization,
     val website: Website,
     val calendar: Calendar,
-)
+) {
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            "$firstName$lastName",
+            "$firstName $lastName",
+            "${firstName.first()} ${lastName.first()}",
+        )
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}
 
 data class PhoneNumber(
     val phoneNumber: String,

@@ -48,12 +48,11 @@ fun CreateContactScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
 
             ) {
@@ -61,7 +60,6 @@ fun CreateContactScreen(
             val iconSize: Dp = with(LocalDensity.current) {
                 titleTextSize.toDp()
             }
-
             IconButton(
                 modifier = Modifier.size(iconSize),
                 onClick = {
@@ -94,305 +92,294 @@ fun CreateContactScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(56.dp))
-
-        var selectedImageUri by remember {
-            mutableStateOf<Uri?>(null)
-        }
-        val photoPickerLauncher =
-            rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-                onResult = { uri -> selectedImageUri = uri })
-
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
-            Image(
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(CircleShape)
-                    .clickable {
+            Spacer(modifier = Modifier.height(56.dp))
+
+            var selectedImageUri by remember {
+                mutableStateOf<Uri?>(null)
+            }
+            val photoPickerLauncher =
+                rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+                    onResult = { uri -> selectedImageUri = uri })
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                    painter = selectedImageUri?.let {
+                        Log.d("AAAA", it.toString())
+                        viewModel.updateImagePath(it.toString())
+                        rememberAsyncImagePainter(it)
+                    } ?: painterResource(
+                        id = R.drawable.ic_add_photo
+                    ),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+                TextButton(
+                    onClick = {
                         photoPickerLauncher.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                         )
                     },
-                painter = selectedImageUri?.let {
-                    Log.d("AAAA", it.toString())
-                    viewModel.updateImagePath(it.toString())
-                    rememberAsyncImagePainter(it)
-                } ?: painterResource(
-                    id = R.drawable.ic_add_photo
-                ),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
-            TextButton(
-                onClick = {
-                    photoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                ) {
+                    Text(
+                        text = stringResource(R.string.add_photo),
+                        fontSize = 16.sp,
+                        color = Color.Blue,
                     )
-                },
+                }
+            }
+
+            Spacer(modifier = Modifier.height(35.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.add_photo),
-                    fontSize = 16.sp,
-                    color = Color.Blue,
+                var showCollapsedMainFields by remember {
+                    mutableStateOf(false)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_person)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.firstName,
+                        onTextChanged = viewModel::updateFirstName,
+                        isError = viewModel.firstName.isBlank(),
+                        placeholderResId = R.string.first_name,
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedMainFields = showCollapsedMainFields.not()
+                    }, showCollapsedFields = { showCollapsedMainFields })
+                }
+                MandatoryTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    value = viewModel.lastName,
+                    onTextChanged = viewModel::updateLastName,
+                    isError = viewModel.lastName.isBlank(),
+                    placeholderResId = R.string.last_name,
                 )
-            }
-        }
 
-        Spacer(modifier = Modifier.height(35.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedMainFields by remember {
-                mutableStateOf(false)
+                if (showCollapsedMainFields) {
+                    CollapsedMainTextFields(viewModel)
+                }
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                IconStartField(iconResId = R.drawable.ic_person)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.firstName,
-                    onTextChanged = viewModel::updateFirstName,
-                    isError = viewModel.firstName.isBlank(),
-                    placeholderResId = R.string.first_name,
-                )
-                IconEndField(onClick = {
-                    showCollapsedMainFields = showCollapsedMainFields.not()
-                }, showCollapsedFields = { showCollapsedMainFields })
+                var showCollapsedPhoneFields by remember {
+                    mutableStateOf(false)
+                }
+                TextSectionTitle(textId = R.string.phone_number_title)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_phone)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.phoneNumber,
+                        onTextChanged = viewModel::updatePhoneNumber,
+                        placeholderResId = R.string.phone_number,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedPhoneFields = showCollapsedPhoneFields.not()
+                    }, showCollapsedFields = { showCollapsedPhoneFields })
+                }
+                if (showCollapsedPhoneFields) {
+                    CollapsedPhoneTextFields(viewModel)
+                }
             }
-            MandatoryTextFieldItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp),
-                value = viewModel.lastName,
-                onTextChanged = viewModel::updateLastName,
-                isError = viewModel.lastName.isBlank(),
-                placeholderResId = R.string.last_name,
-            )
 
-            if (showCollapsedMainFields) {
-                CollapsedMainTextFields(viewModel)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedPhoneFields by remember {
-                mutableStateOf(false)
-            }
-            TextSectionTitle(textId = R.string.phone_number_title)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                IconStartField(iconResId = R.drawable.ic_phone)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.phoneNumber,
-                    onTextChanged = viewModel::updatePhoneNumber,
-                    placeholderResId = R.string.phone_number,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                )
-                IconEndField(onClick = {
-                    showCollapsedPhoneFields = showCollapsedPhoneFields.not()
-                }, showCollapsedFields = { showCollapsedPhoneFields })
+                var showCollapsedPostalAddressFields by remember {
+                    mutableStateOf(false)
+                }
+                TextSectionTitle(textId = R.string.postal_address_title)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_address)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.street,
+                        onTextChanged = viewModel::updateStreet,
+                        placeholderResId = R.string.street,
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedPostalAddressFields = showCollapsedPostalAddressFields.not()
+                    }, showCollapsedFields = { showCollapsedPostalAddressFields })
+                }
+                if (showCollapsedPostalAddressFields) {
+                    CollapsedPostalAddressTextFields(viewModel)
+                }
             }
-            if (showCollapsedPhoneFields) {
-                CollapsedPhoneTextFields(viewModel)
-            }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedPostalAddressFields by remember {
-                mutableStateOf(false)
-            }
-            TextSectionTitle(textId = R.string.postal_address_title)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                IconStartField(iconResId = R.drawable.ic_address)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.street,
-                    onTextChanged = viewModel::updateStreet,
-                    placeholderResId = R.string.street,
-                )
-                IconEndField(onClick = {
-                    showCollapsedPostalAddressFields = showCollapsedPostalAddressFields.not()
-                }, showCollapsedFields = { showCollapsedPostalAddressFields })
+                var showCollapsedEmailAddressFields by remember {
+                    mutableStateOf(false)
+                }
+                TextSectionTitle(textId = R.string.email_address_title)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_email_address)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.emailAddress,
+                        onTextChanged = viewModel::updateEmailAddress,
+                        placeholderResId = R.string.link,
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedEmailAddressFields = showCollapsedEmailAddressFields.not()
+                    }, showCollapsedFields = { showCollapsedEmailAddressFields })
+                }
+                if (showCollapsedEmailAddressFields) {
+                    CollapsedEmailAddressTextFields(viewModel)
+                }
             }
-            if (showCollapsedPostalAddressFields) {
-                CollapsedPostalAddressTextFields(viewModel)
-            }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedEmailAddressFields by remember {
-                mutableStateOf(false)
-            }
-            TextSectionTitle(textId = R.string.email_address_title)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                IconStartField(iconResId = R.drawable.ic_email_address)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.emailAddress,
-                    onTextChanged = viewModel::updateEmailAddress,
-                    placeholderResId = R.string.link,
-                )
-                IconEndField(onClick = {
-                    showCollapsedEmailAddressFields = showCollapsedEmailAddressFields.not()
-                }, showCollapsedFields = { showCollapsedEmailAddressFields })
+                var showCollapsedOrganizationFields by remember {
+                    mutableStateOf(false)
+                }
+                TextSectionTitle(textId = R.string.organization_title)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_job)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.organizationName,
+                        onTextChanged = viewModel::updateOrganizationName,
+                        placeholderResId = R.string.organization_name,
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedOrganizationFields = showCollapsedOrganizationFields.not()
+                    }, showCollapsedFields = { showCollapsedOrganizationFields })
+                }
+                if (showCollapsedOrganizationFields) {
+                    CollapsedOrganizationTextFields(viewModel)
+                }
             }
-            if (showCollapsedEmailAddressFields) {
-                CollapsedEmailAddressTextFields(viewModel)
-            }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedOrganizationFields by remember {
-                mutableStateOf(false)
-            }
-            TextSectionTitle(textId = R.string.organization_title)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                IconStartField(iconResId = R.drawable.ic_job)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.organizationName,
-                    onTextChanged = viewModel::updateOrganizationName,
-                    placeholderResId = R.string.organization_name,
-                )
-                IconEndField(onClick = {
-                    showCollapsedOrganizationFields = showCollapsedOrganizationFields.not()
-                }, showCollapsedFields = { showCollapsedOrganizationFields })
+                var showCollapsedWebsiteFields by remember {
+                    mutableStateOf(false)
+                }
+                TextSectionTitle(textId = R.string.website_title)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_web)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.websiteLink,
+                        onTextChanged = viewModel::updateWebsiteLink,
+                        placeholderResId = R.string.link,
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedWebsiteFields = showCollapsedWebsiteFields.not()
+                    }, showCollapsedFields = { showCollapsedWebsiteFields })
+                }
+                if (showCollapsedWebsiteFields) {
+                    CollapsedWebsiteTextFields(viewModel)
+                }
             }
-            if (showCollapsedOrganizationFields) {
-                CollapsedOrganizationTextFields(viewModel)
-            }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedWebsiteFields by remember {
-                mutableStateOf(false)
-            }
-            TextSectionTitle(textId = R.string.website_title)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                IconStartField(iconResId = R.drawable.ic_web)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.websiteLink,
-                    onTextChanged = viewModel::updateWebsiteLink,
-                    placeholderResId = R.string.link,
-                )
-                IconEndField(onClick = {
-                    showCollapsedWebsiteFields = showCollapsedWebsiteFields.not()
-                }, showCollapsedFields = { showCollapsedWebsiteFields })
+                var showCollapsedCalendarFields by remember {
+                    mutableStateOf(false)
+                }
+                TextSectionTitle(textId = R.string.calendar_title)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                ) {
+                    IconStartField(iconResId = R.drawable.ic_calendar)
+                    MandatoryTextField(
+                        modifier = Modifier.weight(1F),
+                        value = viewModel.calendarLink,
+                        onTextChanged = viewModel::updateCalendarLink,
+                        placeholderResId = R.string.link,
+                    )
+                    IconEndField(onClick = {
+                        showCollapsedCalendarFields = showCollapsedCalendarFields.not()
+                    }, showCollapsedFields = { showCollapsedCalendarFields })
+                }
+                if (showCollapsedCalendarFields) {
+                    CollapsedCalendarTextFields(viewModel)
+                }
             }
-            if (showCollapsedWebsiteFields) {
-                CollapsedWebsiteTextFields(viewModel)
-            }
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            var showCollapsedCalendarFields by remember {
-                mutableStateOf(false)
-            }
-            TextSectionTitle(textId = R.string.calendar_title)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-            ) {
-                IconStartField(iconResId = R.drawable.ic_calendar)
-                MandatoryTextFieldItem(
-                    modifier = Modifier.weight(1F),
-                    value = viewModel.calendarLink,
-                    onTextChanged = viewModel::updateCalendarLink,
-                    placeholderResId = R.string.link,
-                )
-                IconEndField(onClick = {
-                    showCollapsedCalendarFields = showCollapsedCalendarFields.not()
-                }, showCollapsedFields = { showCollapsedCalendarFields })
-            }
-            if (showCollapsedCalendarFields) {
-                CollapsedCalendarTextFields(viewModel)
-            }
-        }
-
-        val context = LocalContext.current
-        LaunchedEffect(key1 = true) {
-            viewModel.uiEvent.collect { event ->
-                when (event) {
-                    is UiEvent.Success -> onDoneClick()
-                    is UiEvent.ShowSnackbar -> {
-                        snackbarHostState.showSnackbar(event.message.asString(context))
+            val context = LocalContext.current
+            LaunchedEffect(key1 = true) {
+                viewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is UiEvent.Success -> onDoneClick()
+                        is UiEvent.ShowSnackbar -> {
+                            snackbarHostState.showSnackbar(event.message.asString(context))
+                        }
                     }
                 }
             }
-        }
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 18.dp),
-            enabled = viewModel.showDoneButton(),
-            onClick = {
-                viewModel.onSaveButtonClick()
-            },
-        ) {
-            Text(
-                text = stringResource(R.string.done),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-            )
         }
     }
 }
 
 @Composable
 fun CollapsedCalendarTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.calendarLabel,
         onTextChanged = viewModel::updateCalendarLabel,
         placeholderResId = R.string.label,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.calendarType,
         onTextChanged = viewModel::updateCalendarType,
         placeholderResId = R.string.type,
@@ -401,12 +388,12 @@ fun CollapsedCalendarTextFields(viewModel: CreateContactViewModel) {
 
 @Composable
 fun CollapsedWebsiteTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.websiteLabel,
         onTextChanged = viewModel::updateWebsiteLabel,
         placeholderResId = R.string.label,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.websiteType,
         onTextChanged = viewModel::updateWebsiteType,
         placeholderResId = R.string.type,
@@ -415,22 +402,22 @@ fun CollapsedWebsiteTextFields(viewModel: CreateContactViewModel) {
 
 @Composable
 fun CollapsedOrganizationTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.organizationLabel,
         onTextChanged = viewModel::updateOrganizationLabel,
         placeholderResId = R.string.label,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.jobTitle,
         onTextChanged = viewModel::updateJobTitle,
         placeholderResId = R.string.job_title,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.jobDescription,
         onTextChanged = viewModel::updateJobDescription,
         placeholderResId = R.string.job_description,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.department,
         onTextChanged = viewModel::updateDepartment,
         placeholderResId = R.string.department,
@@ -439,12 +426,12 @@ fun CollapsedOrganizationTextFields(viewModel: CreateContactViewModel) {
 
 @Composable
 fun CollapsedPhoneTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.phoneNumberLabel,
         onTextChanged = viewModel::updatePhoneNumberLabel,
         placeholderResId = R.string.label,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.phoneNumberType,
         onTextChanged = viewModel::updatePhoneNumberType,
         placeholderResId = R.string.type,
@@ -453,12 +440,12 @@ fun CollapsedPhoneTextFields(viewModel: CreateContactViewModel) {
 
 @Composable
 fun CollapsedEmailAddressTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.emailAddressLabel,
         onTextChanged = viewModel::updateEmailAddressLabel,
         placeholderResId = R.string.label,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.emailAddressType,
         onTextChanged = viewModel::updateEmailAddressType,
         placeholderResId = R.string.type,
@@ -467,38 +454,38 @@ fun CollapsedEmailAddressTextFields(viewModel: CreateContactViewModel) {
 
 @Composable
 fun CollapsedPostalAddressTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.city,
         onTextChanged = viewModel::updateCity,
         placeholderResId = R.string.region,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.region,
         onTextChanged = viewModel::updateRegion,
         placeholderResId = R.string.region,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.neighborhood,
         onTextChanged = viewModel::updateNeighborhood,
         placeholderResId = R.string.neighborhood,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.postCode,
         onTextChanged = viewModel::updatePostCode,
         placeholderResId = R.string.post_code,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.country,
         onTextChanged = viewModel::updateCountry,
         placeholderResId = R.string.country,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.postalAddressLabel,
         onTextChanged = viewModel::updatePostalAddressLabel,
         placeholderResId = R.string.label,
     )
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.postalAddressType,
         onTextChanged = viewModel::updatePostalAddressType,
         placeholderResId = R.string.type,
@@ -507,32 +494,32 @@ fun CollapsedPostalAddressTextFields(viewModel: CreateContactViewModel) {
 
 @Composable
 private fun CollapsedMainTextFields(viewModel: CreateContactViewModel) {
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.title,
         onTextChanged = viewModel::updateTitle,
         placeholderResId = R.string.title,
     )
 
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.fullName,
         onTextChanged = viewModel::updateFullName,
         placeholderResId = R.string.full_name,
     )
 
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.gender,
         onTextChanged = viewModel::updateGender,
         placeholderResId = R.string.gender,
     )
 
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.birthday,
         onTextChanged = viewModel::updateBirthday,
         placeholderResId = R.string.birthday,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
 
-    CollapsedTextFieldItem(
+    CollapsedTextField(
         value = viewModel.occupation,
         onTextChanged = viewModel::updateOccupation,
         placeholderResId = R.string.occupation,

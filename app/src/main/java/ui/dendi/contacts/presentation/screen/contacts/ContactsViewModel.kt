@@ -1,11 +1,9 @@
 package ui.dendi.contacts.presentation.screen.contacts
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ui.dendi.contacts.domain.ContactsRepository
 import ui.dendi.contacts.domain.Person
@@ -16,17 +14,34 @@ class ContactsViewModel @Inject constructor(
     private val repository: ContactsRepository,
 ) : ViewModel() {
 
-    var contacts by mutableStateOf(emptyList<Person>())
-        private set
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+
+    private val _contacts = MutableStateFlow(listOf<Person>())
+    val contacts = searchText
+        .combine(_contacts) { text, contacts ->
+            if (text.isBlank()) {
+                contacts
+            } else {
+                contacts.filter {
+                    it.doesMatchSearchQuery(text)
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), _contacts.value)
 
     init {
         getContacts()
     }
 
+    fun onSearchTextChange(text: String) {
+        _searchText.value = text
+    }
+
     private fun getContacts() {
         viewModelScope.launch {
             repository.getContacts().collect {
-                contacts = it
+                _contacts.value = it
             }
         }
     }

@@ -73,6 +73,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun PersonObject.toPerson(): Person {
         return Person(
+            id = id.toString(),
             title = title,
             fullName = fullName,
             lastName = lastName,

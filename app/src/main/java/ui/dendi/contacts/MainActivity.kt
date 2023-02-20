@@ -48,7 +48,9 @@ class MainActivity : ComponentActivity() {
                             CreateContactScreen(
                                 snackbarHostState = snackbarHostState,
                                 onDoneClick = {
-                                    navController.navigate(Route.CONTACTS)
+                                    navController.navigate(Route.CONTACTS) {
+                                        popUpTo(navController.graph.id)
+                                    }
                                 },
                                 onCancelClick = {
                                     navController.popBackStack()

@@ -1,6 +1,8 @@
 package ui.dendi.contacts.presentation.screen.create_contact.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -9,11 +11,14 @@ import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MandatoryTextFieldItem(
+fun MandatoryTextField(
     modifier: Modifier = Modifier,
     value: String,
     onTextChanged: (String) -> Unit,
@@ -21,14 +26,20 @@ fun MandatoryTextFieldItem(
     isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
-    OutlinedTextField(
-        modifier = modifier,
+    TextField(
+        modifier = modifier
+            .defaultMinSize(minHeight = 55.dp)
+            .border(
+                width = 0.5.dp,
+                color = if (isError) MaterialTheme.colorScheme.error else Color.Black,
+                shape = RoundedCornerShape(25.dp)
+            )
+            .shadow(3.dp, RoundedCornerShape(25.dp)),
         value = value,
         onValueChange = onTextChanged,
         placeholder = {
             Text(text = stringResource(placeholderResId))
         },
-        isError = isError,
         trailingIcon = {
             if (isError) {
                 Icon(
@@ -48,6 +59,10 @@ fun MandatoryTextFieldItem(
             }
         },
         keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(percent = 15),
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
     )
 }
