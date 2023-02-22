@@ -1,4 +1,4 @@
-package ui.dendi.contacts.data
+package ui.dendi.contacts.data.model
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
@@ -7,7 +7,6 @@ import org.mongodb.kbson.ObjectId
 class PersonObject : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId.invoke()
-    var title: String = ""
     var fullName: String = ""
     var lastName: String = ""
     var firstName: String = ""

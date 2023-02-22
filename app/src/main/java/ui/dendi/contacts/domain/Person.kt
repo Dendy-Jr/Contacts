@@ -1,10 +1,7 @@
 package ui.dendi.contacts.domain
 
-import java.util.*
-
 data class Person(
-    val id: String = UUID.randomUUID().toString(),
-    val title: String,
+    val id: String,
     val fullName: String,
     val lastName: String,
     val firstName: String,
@@ -49,7 +46,7 @@ data class PostalAddress(
 )
 
 data class EmailAddress(
-    val emailAddress: String,
+    val link: String,
     val type: String,
     val label: String,
 )

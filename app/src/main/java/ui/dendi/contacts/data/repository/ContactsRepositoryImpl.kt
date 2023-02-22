@@ -1,4 +1,4 @@
-package ui.dendi.contacts.data
+package ui.dendi.contacts.data.repository
 
 import android.util.Log
 import io.realm.kotlin.Realm
@@ -6,6 +6,7 @@ import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.ObjectId
+import ui.dendi.contacts.data.model.*
 import ui.dendi.contacts.domain.*
 import javax.inject.Inject
 
@@ -23,9 +24,14 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         realm.write { copyToRealm(person.toPersonObject()) }
     }
 
+    override suspend fun getContact(id: String): Person? {
+        val person = realm.query<PersonObject>(query = "id == $0", ObjectId(id)).first().find()
+        return person?.toPerson()
+    }
+
     override suspend fun deleteContact(id: String) {
         realm.write {
-            val person = query<PersonObject>(query = "_id == $0", ObjectId(id)).first().find()
+            val person = query<PersonObject>(query = "id == $0", ObjectId(id)).first().find()
             try {
                 person?.let { delete(it) }
             } catch (e: Exception) {
@@ -50,7 +56,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
     )
 
     private fun EmailAddressObject.toEmailAddress(): EmailAddress {
-        return EmailAddress(emailAddress = emailAddress, type = type, label = label)
+        return EmailAddress(link = emailAddress, type = type, label = label)
     }
 
     private fun OrganizationObject.toOrganization(): Organization {
@@ -73,8 +79,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun PersonObject.toPerson(): Person {
         return Person(
-            id = id.toString(),
-            title = title,
+            id = id.toHexString(),
             fullName = fullName,
             lastName = lastName,
             firstName = firstName,
@@ -98,7 +103,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
                 type = "",
             ),
             emailAddress = emailAddress?.toEmailAddress() ?: EmailAddress(
-                emailAddress = "",
+                link = "",
                 type = "",
                 label = "",
             ),
@@ -136,7 +141,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun EmailAddress.toEmailAddressObject(): EmailAddressObject =
         EmailAddressObject().apply {
-            emailAddress = this@toEmailAddressObject.emailAddress
+            emailAddress = this@toEmailAddressObject.link
             type = this@toEmailAddressObject.type
             label = this@toEmailAddressObject.label
         }
@@ -160,7 +165,6 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun Person.toPersonObject(): PersonObject {
         return PersonObject().apply {
-            title = this@toPersonObject.title
             fullName = this@toPersonObject.fullName
             lastName = this@toPersonObject.lastName
             firstName = this@toPersonObject.firstName

@@ -12,10 +12,13 @@ import ui.dendi.contacts.R
 val Acme = FontFamily(
     Font(R.font.acme)
 )
+val Bellefair = FontFamily(
+    Font(R.font.bellefair)
+)
 
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = Acme,
+        fontFamily = Bellefair,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,

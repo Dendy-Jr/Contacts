@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 import ui.dendi.contacts.core.UiEvent
 import ui.dendi.contacts.domain.*
 import javax.inject.Inject
@@ -21,13 +22,11 @@ class CreateContactViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    var title by mutableStateOf("")
-        private set
-    var fullName by mutableStateOf("")
-        private set
     var lastName by mutableStateOf("")
         private set
     var firstName by mutableStateOf("")
+        private set
+    var fullName by mutableStateOf("")
         private set
     var gender by mutableStateOf("")
         private set
@@ -93,10 +92,6 @@ class CreateContactViewModel @Inject constructor(
         private set
     var calendarType by mutableStateOf("")
         private set
-
-    fun updateTitle(title: String) {
-        this.title = title
-    }
 
     fun updateFullName(fullName: String) {
         this.fullName = fullName
@@ -238,7 +233,7 @@ class CreateContactViewModel @Inject constructor(
     private suspend fun insertContact() {
         repository.insertContact(
             Person(
-                title = title,
+                id = ObjectId.invoke().toString(),
                 fullName = fullName,
                 lastName = lastName.trim(),
                 firstName = firstName.trim(),
@@ -262,7 +257,7 @@ class CreateContactViewModel @Inject constructor(
                     type = postalAddressType,
                 ),
                 emailAddress = EmailAddress(
-                    emailAddress = emailAddress,
+                    link = emailAddress,
                     type = emailAddressType,
                     label = emailAddressLabel,
                 ),

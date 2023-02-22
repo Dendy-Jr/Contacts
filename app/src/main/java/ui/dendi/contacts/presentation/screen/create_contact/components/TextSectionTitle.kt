@@ -15,7 +15,7 @@ fun TextSectionTitle(@StringRes textId: Int) {
     Text(
         modifier = Modifier.padding(start = 30.dp),
         text = stringResource(textId),
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Medium,
     )
 }
