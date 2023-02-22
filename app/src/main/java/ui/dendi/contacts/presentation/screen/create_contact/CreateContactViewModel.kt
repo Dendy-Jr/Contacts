@@ -10,8 +10,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
-import ui.dendi.contacts.core.UiEvent
-import ui.dendi.contacts.domain.*
+import ui.dendi.contacts.core.model.UiEvent
+import ui.dendi.contacts.domain.model.*
+import ui.dendi.contacts.domain.repository.ContactsRepository
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,206 +20,150 @@ class CreateContactViewModel @Inject constructor(
     private val repository: ContactsRepository,
 ) : ViewModel() {
 
+    var person by mutableStateOf(Person())
+        private set
+    var phoneNumber by mutableStateOf(PhoneNumber())
+        private set
+    var postalAddress by mutableStateOf(PostalAddress())
+        private set
+    var emailAddress by mutableStateOf(EmailAddress())
+        private set
+    var organization by mutableStateOf(Organization())
+        private set
+    var website by mutableStateOf(Website())
+        private set
+    var calendar by mutableStateOf(Calendar())
+        private set
+
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    var lastName by mutableStateOf("")
-        private set
-    var firstName by mutableStateOf("")
-        private set
-    var fullName by mutableStateOf("")
-        private set
-    var gender by mutableStateOf("")
-        private set
-    var imagePath by mutableStateOf("")
-        private set
-    var birthday by mutableStateOf("")
-        private set
-    var occupation by mutableStateOf("")
-        private set
-
-    var phoneNumber by mutableStateOf("")
-        private set
-    var phoneNumberLabel by mutableStateOf("")
-        private set
-    var phoneNumberType by mutableStateOf("")
-        private set
-
-    var street by mutableStateOf("")
-        private set
-    var city by mutableStateOf("")
-        private set
-    var region by mutableStateOf("")
-        private set
-    var neighborhood by mutableStateOf("")
-        private set
-    var postCode by mutableStateOf("")
-        private set
-    var country by mutableStateOf("")
-        private set
-    var postalAddressLabel by mutableStateOf("")
-        private set
-    var postalAddressType by mutableStateOf("")
-        private set
-
-    var emailAddress by mutableStateOf("")
-        private set
-    var emailAddressType by mutableStateOf("")
-        private set
-    var emailAddressLabel by mutableStateOf("")
-        private set
-
-    var organizationName by mutableStateOf("")
-        private set
-    var organizationLabel by mutableStateOf("")
-        private set
-    var jobTitle by mutableStateOf("")
-        private set
-    var jobDescription by mutableStateOf("")
-        private set
-    var department by mutableStateOf("")
-        private set
-
-    var websiteLink by mutableStateOf("")
-        private set
-    var websiteLabel by mutableStateOf("")
-        private set
-    var websiteType by mutableStateOf("")
-        private set
-
-    var calendarLink by mutableStateOf("")
-        private set
-    var calendarLabel by mutableStateOf("")
-        private set
-    var calendarType by mutableStateOf("")
-        private set
-
     fun updateFullName(fullName: String) {
-        this.fullName = fullName
+        person = person.copy(fullName = fullName)
     }
 
     fun updateLastName(lastName: String) {
-        this.lastName = lastName
+        person = person.copy(lastName = lastName)
     }
 
     fun updateFirstName(firstName: String) {
-        this.firstName = firstName
+        person = person.copy(firstName = firstName)
     }
 
     fun updateGender(gender: String) {
-        this.gender = gender
+        person = person.copy(gender = gender)
     }
 
     fun updateImagePath(imagePath: String) {
-        this.imagePath = imagePath
+        person = person.copy(imagePath = imagePath)
     }
 
     fun updateBirthday(birthday: String) {
-        this.birthday = birthday
+        person = person.copy(birthday = birthday)
     }
 
     fun updateOccupation(occupation: String) {
-        this.occupation = occupation
+        person = person.copy(occupation = occupation)
     }
 
-    fun updatePhoneNumber(phoneNumber: String) {
-        this.phoneNumber = phoneNumber
+    fun updatePhoneNumber(number: String) {
+        phoneNumber = phoneNumber.copy(number = number)
     }
 
-    fun updatePhoneNumberLabel(phoneNumberLabel: String) {
-        this.phoneNumberLabel = phoneNumberLabel
+    fun updatePhoneNumberLabel(label: String) {
+        phoneNumber = phoneNumber.copy(label = label)
     }
 
-    fun updatePhoneNumberType(phoneNumberType: String) {
-        this.phoneNumberType = phoneNumberType
+    fun updatePhoneNumberType(type: String) {
+        phoneNumber = phoneNumber.copy(type = type)
     }
 
     fun updateStreet(street: String) {
-        this.street = street
+        postalAddress = postalAddress.copy(street = street)
     }
 
     fun updateCity(city: String) {
-        this.city = city
+        postalAddress = postalAddress.copy(city = city)
     }
 
     fun updateRegion(region: String) {
-        this.region = region
+        postalAddress = postalAddress.copy(region = region)
     }
 
     fun updateNeighborhood(neighborhood: String) {
-        this.neighborhood = neighborhood
+        postalAddress = postalAddress.copy(neighborhood = neighborhood)
     }
 
     fun updatePostCode(postCode: String) {
-        this.postCode = postCode
+        postalAddress = postalAddress.copy(postCode = postCode)
     }
 
     fun updateCountry(country: String) {
-        this.country = country
+        postalAddress = postalAddress.copy(country = country)
     }
 
-    fun updatePostalAddressLabel(postalAddressLabel: String) {
-        this.postalAddressLabel = postalAddressLabel
+    fun updatePostalAddressLabel(label: String) {
+        postalAddress = postalAddress.copy(label = label)
     }
 
-    fun updatePostalAddressType(postalAddressType: String) {
-        this.postalAddressType = postalAddressType
+    fun updatePostalAddressType(type: String) {
+        postalAddress = postalAddress.copy(type = type)
     }
 
-    fun updateEmailAddress(emailAddress: String) {
-        this.emailAddress = emailAddress
+    fun updateEmailAddress(link: String) {
+        emailAddress = emailAddress.copy(link = link)
     }
 
-    fun updateEmailAddressType(emailAddressType: String) {
-        this.emailAddressType = emailAddressType
+    fun updateEmailAddressType(type: String) {
+        emailAddress = emailAddress.copy(type = type)
     }
 
-    fun updateEmailAddressLabel(emailAddressLabel: String) {
-        this.emailAddressLabel = emailAddressLabel
+    fun updateEmailAddressLabel(label: String) {
+        emailAddress = emailAddress.copy(label = label)
     }
 
-    fun updateOrganizationName(organizationName: String) {
-        this.organizationName = organizationName
+    fun updateOrganizationName(name: String) {
+        organization = organization.copy(name = name)
     }
 
-    fun updateOrganizationLabel(organizationLabel: String) {
-        this.organizationLabel = organizationLabel
+    fun updateOrganizationLabel(label: String) {
+        organization = organization.copy(label = label)
     }
 
     fun updateJobTitle(jobTitle: String) {
-        this.jobTitle = jobTitle
+        organization = organization.copy(jobTitle = jobTitle)
     }
 
     fun updateJobDescription(jobDescription: String) {
-        this.jobDescription = jobDescription
+        organization = organization.copy(jobDescription = jobDescription)
     }
 
     fun updateDepartment(department: String) {
-        this.department = department
+        organization = organization.copy(department = department)
     }
 
-    fun updateWebsiteLink(websiteLink: String) {
-        this.websiteLink = websiteLink
+    fun updateWebsiteLink(link: String) {
+        website = website.copy(link = link)
     }
 
-    fun updateWebsiteLabel(websiteLabel: String) {
-        this.websiteLabel = websiteLabel
+    fun updateWebsiteLabel(label: String) {
+        website = website.copy(label = label)
     }
 
-    fun updateWebsiteType(websiteType: String) {
-        this.websiteType = websiteType
+    fun updateWebsiteType(type: String) {
+        website = website.copy(type = type)
     }
 
-    fun updateCalendarLink(calendarLink: String) {
-        this.calendarLink = calendarLink
+    fun updateCalendarLink(link: String) {
+        calendar = calendar.copy(link = link)
     }
 
-    fun updateCalendarLabel(calendarLabel: String) {
-        this.calendarLabel = calendarLabel
+    fun updateCalendarLabel(label: String) {
+        calendar = calendar.copy(label = label)
     }
 
-    fun updateCalendarType(calendarType: String) {
-        this.calendarType = calendarType
+    fun updateCalendarType(type: String) {
+        calendar = calendar.copy(type = type)
     }
 
     fun onSaveButtonClick() {
@@ -228,52 +173,20 @@ class CreateContactViewModel @Inject constructor(
         }
     }
 
-    fun showDoneButton(): Boolean = firstName.isNotBlank() && lastName.isNotBlank()
+    fun showDoneButton(): Boolean {
+        return person.firstName.isNotBlank() && person.lastName.isNotBlank()
+    }
 
     private suspend fun insertContact() {
         repository.insertContact(
-            Person(
+            person = person.copy(
                 id = ObjectId.invoke().toString(),
-                fullName = fullName,
-                lastName = lastName.trim(),
-                firstName = firstName.trim(),
-                gender = gender,
-                imagePath = imagePath,
-                birthday = birthday,
-                occupation = occupation,
-                phoneNumber = PhoneNumber(
-                    phoneNumber = phoneNumber,
-                    label = phoneNumberLabel,
-                    type = phoneNumberType,
-                ),
-                postalAddress = PostalAddress(
-                    street = street,
-                    city = city,
-                    region = region,
-                    neighborhood = neighborhood,
-                    postCode = postCode,
-                    country = country,
-                    label = postalAddressLabel,
-                    type = postalAddressType,
-                ),
-                emailAddress = EmailAddress(
-                    link = emailAddress,
-                    type = emailAddressType,
-                    label = emailAddressLabel,
-                ),
-                organization = Organization(
-                    organizationName = organizationName,
-                    label = organizationLabel,
-                    jobTitle = jobTitle,
-                    jobDescription = jobDescription,
-                    department = department,
-                ),
-                website = Website(link = websiteLink, label = websiteLabel, type = websiteType),
-                calendar = Calendar(
-                    calendarLink = calendarLink,
-                    label = calendarLabel,
-                    type = calendarType,
-                ),
+                phoneNumber = phoneNumber,
+                postalAddress = postalAddress,
+                emailAddress = emailAddress,
+                organization = organization,
+                website = website,
+                calendar = calendar
             )
         )
     }

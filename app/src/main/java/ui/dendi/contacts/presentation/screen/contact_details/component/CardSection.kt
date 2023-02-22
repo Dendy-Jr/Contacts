@@ -26,7 +26,7 @@ fun CardSection(
                 spotColor = Color.Gray,
                 elevation = 8.dp
             ),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF30E3CA))
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             content()

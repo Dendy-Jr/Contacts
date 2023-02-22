@@ -2,8 +2,8 @@ package ui.dendi.contacts.presentation.screen.contact_details
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ui.dendi.contacts.domain.ContactsRepository
-import ui.dendi.contacts.domain.Person
+import ui.dendi.contacts.domain.model.Person
+import ui.dendi.contacts.domain.repository.ContactsRepository
 import javax.inject.Inject
 
 @HiltViewModel

@@ -24,23 +24,21 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import ui.dendi.contacts.R
-import ui.dendi.contacts.domain.Person
+import ui.dendi.contacts.domain.model.Person
 import ui.dendi.contacts.navigation.Route
 import ui.dendi.contacts.presentation.component.BubbleAnimation
+import ui.dendi.contacts.presentation.component.textSizeToDp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,8 +50,8 @@ fun ContactsScreen(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         BubbleAnimation(
-            bubbleColor1 = Color(0xFF303841),
-            bubbleColor2 = Color(0xFFFF5722),
+            bubbleColor1 = Color(0xFFE4F9F5),
+            bubbleColor2 = Color(0xFF30E3CA),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(500.dp)
@@ -66,10 +64,8 @@ fun ContactsScreen(
                     .background(
                         brush = Brush.horizontalGradient(
                             listOf(
-                                Color(0xFFEA907A),
-                                Color(0xFFFBC687),
-                                Color(0xFFF4F7C5),
-                                Color(0xFFAACDBE),
+                                Color(0xFF11999E),
+                                Color(0xFF40514E),
                             )
                         )
                     )
@@ -79,22 +75,18 @@ fun ContactsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val titleTextSize: TextUnit = 36.sp
-                    val iconSize: Dp = with(LocalDensity.current) {
-                        titleTextSize.toDp()
-                    }
                     Text(
                         modifier = Modifier.weight(1F),
                         text = stringResource(R.string.contacts),
                         textAlign = TextAlign.Start,
-                        fontSize = titleTextSize,
+                        fontSize = 36.sp,
                         fontWeight = FontWeight.ExtraBold,
                     )
                     IconButton(
                         onClick = { onNextClick() },
                     ) {
                         Icon(
-                            modifier = Modifier.size(iconSize),
+                            modifier = Modifier.size(36.sp.textSizeToDp()),
                             imageVector = Icons.Filled.Add,
                             contentDescription = null,
                         )
@@ -163,11 +155,6 @@ private fun ContactItem(contact: Person, navHostController: NavHostController) {
     } else {
         "${contact.lastName} ${contact.firstName}"
     }
-
-    val contactTextSize: TextUnit = 16.sp
-    val iconSize: Dp = with(LocalDensity.current) {
-        contactTextSize.toDp()
-    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,7 +167,7 @@ private fun ContactItem(contact: Person, navHostController: NavHostController) {
     ) {
         Image(
             modifier = Modifier
-                .size(iconSize * 2)
+                .size(16.sp.textSizeToDp() * 2)
                 .clip(CircleShape),
             painter = if (contact.imagePath.isNotEmpty()) {
                 rememberAsyncImagePainter(contact.imagePath)
@@ -192,7 +179,7 @@ private fun ContactItem(contact: Person, navHostController: NavHostController) {
         )
         Text(
             text = contactName,
-            fontSize = contactTextSize,
+            fontSize = 16.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

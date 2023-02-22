@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import ui.dendi.contacts.R
-import ui.dendi.contacts.domain.Person
+import ui.dendi.contacts.domain.model.Person
 import ui.dendi.contacts.presentation.screen.contact_details.component.CardSection
 import ui.dendi.contacts.presentation.screen.contact_details.component.ContactInformation
 
@@ -45,10 +45,8 @@ fun ContactDetailsScreen(
                 .background(
                     brush = Brush.horizontalGradient(
                         listOf(
-                            Color(0xFFEA907A),
-                            Color(0xFFFBC687),
-                            Color(0xFFF4F7C5),
-                            Color(0xFFAACDBE),
+                            Color(0xFF11999E),
+                            Color(0xFF40514E),
                         )
                     )
                 )
@@ -66,8 +64,9 @@ fun ContactDetailsScreen(
         }
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
+                .background(Color(0xFFE4F9F5))
+                .padding(horizontal = 16.dp)
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -94,7 +93,7 @@ fun ContactDetailsScreen(
                     fontSize = 24.sp
                 )
                 Text(
-                    text = contact.phoneNumber.phoneNumber,
+                    text = contact.phoneNumber.number,
                     fontSize = 18.sp
                 )
             }
@@ -124,7 +123,7 @@ fun ContactDetailsScreen(
                 val phone = contact.phoneNumber
                 ContactInformation(
                     titleResId = R.string.phone_number,
-                    value = phone.phoneNumber,
+                    value = phone.number,
                 )
                 ContactInformation(
                     titleResId = R.string.label,
@@ -195,7 +194,7 @@ fun ContactDetailsScreen(
                 val organization = contact.organization
                 ContactInformation(
                     titleResId = R.string.organization_name,
-                    value = organization.organizationName,
+                    value = organization.name,
                 )
                 ContactInformation(
                     titleResId = R.string.label,
@@ -237,7 +236,7 @@ fun ContactDetailsScreen(
                 val calendar = contact.calendar
                 ContactInformation(
                     titleResId = R.string.link,
-                    value = calendar.calendarLink,
+                    value = calendar.link,
                 )
                 ContactInformation(
                     titleResId = R.string.label,

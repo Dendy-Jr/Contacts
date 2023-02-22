@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.ObjectId
 import ui.dendi.contacts.data.model.*
-import ui.dendi.contacts.domain.*
+import ui.dendi.contacts.domain.model.*
+import ui.dendi.contacts.domain.repository.ContactsRepository
 import javax.inject.Inject
 
 class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRepository {
@@ -41,7 +42,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
     }
 
     private fun PhoneNumberObject.toPhoneNumber(): PhoneNumber {
-        return PhoneNumber(phoneNumber = phoneNumber, label = label, type = type)
+        return PhoneNumber(number = number, label = label, type = type)
     }
 
     private fun PostalAddressObject.toPostalAddress() = PostalAddress(
@@ -61,7 +62,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun OrganizationObject.toOrganization(): Organization {
         return Organization(
-            organizationName = organizationName,
+            name = name,
             label = label,
             jobTitle = jobTitle,
             jobDescription = jobDescription,
@@ -74,7 +75,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
     }
 
     private fun CalendarObject.toCalendar(): Calendar {
-        return Calendar(calendarLink = calendarLink, label = label, type = type)
+        return Calendar(link = link, label = label, type = type)
     }
 
     private fun PersonObject.toPerson(): Person {
@@ -88,7 +89,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
             birthday = birthday,
             occupation = occupation,
             phoneNumber = phoneNumber?.toPhoneNumber() ?: PhoneNumber(
-                phoneNumber = "",
+                number = "",
                 label = "",
                 type = "",
             ),
@@ -108,19 +109,19 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
                 label = "",
             ),
             organization = organization?.toOrganization() ?: Organization(
-                organizationName = "",
+                name = "",
                 label = "",
                 jobTitle = "",
                 jobDescription = "",
                 department = "",
             ),
             website = website?.toWebsite() ?: Website(link = "", label = "", type = ""),
-            calendar = calendar?.toCalendar() ?: Calendar(calendarLink = "", label = "", type = ""),
+            calendar = calendar?.toCalendar() ?: Calendar(link = "", label = "", type = ""),
         )
     }
 
     private fun Calendar.toCalendarObject() = CalendarObject().apply {
-        calendarLink = this@toCalendarObject.calendarLink
+        link = this@toCalendarObject.link
         label = this@toCalendarObject.label
         type = this@toCalendarObject.type
     }
@@ -132,7 +133,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
     }
 
     private fun Organization.toOrganizationObject() = OrganizationObject().apply {
-        organizationName = this@toOrganizationObject.organizationName
+        name = this@toOrganizationObject.name
         label = this@toOrganizationObject.label
         jobTitle = this@toOrganizationObject.jobTitle
         jobDescription = this@toOrganizationObject.jobDescription
@@ -147,7 +148,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         }
 
     private fun PhoneNumber.toPhoneNumberObject(): PhoneNumberObject = PhoneNumberObject().apply {
-        phoneNumber = this@toPhoneNumberObject.phoneNumber
+        number = this@toPhoneNumberObject.number
         label = this@toPhoneNumberObject.label
         type = this@toPhoneNumberObject.type
     }

@@ -23,7 +23,7 @@ class PersonObject : RealmObject {
 }
 
 class PhoneNumberObject : RealmObject {
-    var phoneNumber: String = ""
+    var number: String = ""
     var label: String = ""
     var type: String = ""
 }
@@ -46,7 +46,7 @@ class EmailAddressObject : RealmObject {
 }
 
 class OrganizationObject : RealmObject {
-    var organizationName: String = ""
+    var name: String = ""
     var label: String = ""
     var jobTitle: String = ""
     var jobDescription: String = ""
@@ -60,7 +60,7 @@ class WebsiteObject : RealmObject {
 }
 
 class CalendarObject : RealmObject {
-    var calendarLink: String = ""
+    var link: String = ""
     var label: String = ""
     var type: String = ""
 }

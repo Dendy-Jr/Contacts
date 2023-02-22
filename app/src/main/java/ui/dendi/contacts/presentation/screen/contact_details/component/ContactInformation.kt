@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ContactInformation(
     @StringRes titleResId: Int,
-    titleColor: Color = Color.LightGray,
+    titleColor: Color = Color.Gray,
     value: String,
     valueColor: Color = Color.Black,
 ) {

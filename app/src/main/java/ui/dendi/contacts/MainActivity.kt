@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                                 snackbarHostState = snackbarHostState,
                                 onDoneClick = {
                                     navController.navigate(Route.CONTACTS) {
-                                        popUpTo(navController.graph.id)
+                                        popUpTo(0)
                                     }
                                 },
                                 onCancelClick = {

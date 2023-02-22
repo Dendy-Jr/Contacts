@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core
+package ui.dendi.contacts.core.model
 
 sealed class UiEvent {
     object Success : UiEvent()

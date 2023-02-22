@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ui.dendi.contacts.domain.ContactsRepository
-import ui.dendi.contacts.domain.Person
+import ui.dendi.contacts.domain.model.Person
+import ui.dendi.contacts.domain.repository.ContactsRepository
 import javax.inject.Inject
 
 @HiltViewModel

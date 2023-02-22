@@ -9,7 +9,7 @@ import io.realm.kotlin.RealmConfiguration
 import ui.dendi.contacts.data.*
 import ui.dendi.contacts.data.model.*
 import ui.dendi.contacts.data.repository.ContactsRepositoryImpl
-import ui.dendi.contacts.domain.ContactsRepository
+import ui.dendi.contacts.domain.repository.ContactsRepository
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
