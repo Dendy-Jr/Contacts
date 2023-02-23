@@ -10,14 +10,18 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
+import ui.dendi.contacts.R
 import ui.dendi.contacts.core.model.UiEvent
+import ui.dendi.contacts.core.model.UiText
 import ui.dendi.contacts.domain.model.*
 import ui.dendi.contacts.domain.repository.ContactsRepository
+import ui.dendi.contacts.domain.use_case.ValidateContactInputUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateContactViewModel @Inject constructor(
     private val repository: ContactsRepository,
+    private val validateContactInputUseCase: ValidateContactInputUseCase,
 ) : ViewModel() {
 
     var person by mutableStateOf(Person())
@@ -38,16 +42,26 @@ class CreateContactViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    var enableDoneButton by mutableStateOf(false)
+        private set
+
+    var screenMessage by mutableStateOf<UiText?>(null)
+        private set
+    var showScreenMessage by mutableStateOf(true)
+        private set
+
     fun updateFullName(fullName: String) {
         person = person.copy(fullName = fullName)
     }
 
     fun updateLastName(lastName: String) {
         person = person.copy(lastName = lastName)
+        checkInputValidation()
     }
 
     fun updateFirstName(firstName: String) {
         person = person.copy(firstName = firstName)
+        checkInputValidation()
     }
 
     fun updateGender(gender: String) {
@@ -166,28 +180,56 @@ class CreateContactViewModel @Inject constructor(
         calendar = calendar.copy(type = type)
     }
 
-    fun onSaveButtonClick() {
+    fun onDoneButtonClick() {
         viewModelScope.launch {
-            insertContact()
+            repository.insertContact(
+                person = person.copy(
+                    id = ObjectId.invoke().toString(),
+                    phoneNumber = phoneNumber,
+                    postalAddress = postalAddress,
+                    emailAddress = emailAddress,
+                    organization = organization,
+                    website = website,
+                    calendar = calendar
+                )
+            )
+            _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(resId = R.string.contact_created)))
             _uiEvent.send(UiEvent.Success)
         }
     }
 
-    fun showDoneButton(): Boolean {
-        return person.firstName.isNotBlank() && person.lastName.isNotBlank()
+    private fun checkInputValidation() {
+        viewModelScope.launch {
+            val validationResult = validateContactInputUseCase(
+                firstName = person.firstName,
+                lastName = person.lastName
+            )
+            processInputValidationType(validationResult)
+        }
     }
 
-    private suspend fun insertContact() {
-        repository.insertContact(
-            person = person.copy(
-                id = ObjectId.invoke().toString(),
-                phoneNumber = phoneNumber,
-                postalAddress = postalAddress,
-                emailAddress = emailAddress,
-                organization = organization,
-                website = website,
-                calendar = calendar
-            )
-        )
+    private fun processInputValidationType(type: ContactInputValidationType) {
+        when (type) {
+            ContactInputValidationType.EmptyField -> {
+                enableDoneButton = false
+                showScreenMessage = true
+                screenMessage = UiText.StringResource(resId = R.string.name_cannot_be_empty)
+            }
+            ContactInputValidationType.FieldContainsNumber -> {
+                enableDoneButton = false
+                showScreenMessage = true
+                screenMessage = UiText.StringResource(resId = R.string.name_cannot_contain_numbers)
+            }
+            ContactInputValidationType.FieldContainsSpecialCharacter -> {
+                enableDoneButton = false
+                showScreenMessage = true
+                screenMessage =
+                    UiText.StringResource(resId = R.string.name_cannot_contain_special_characters)
+            }
+            ContactInputValidationType.Valid -> {
+                enableDoneButton = true
+                showScreenMessage = false
+            }
+        }
     }
 }

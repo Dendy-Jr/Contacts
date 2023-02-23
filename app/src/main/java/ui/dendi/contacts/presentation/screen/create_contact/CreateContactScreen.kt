@@ -49,8 +49,8 @@ fun CreateContactScreen(
                 .background(
                     brush = Brush.horizontalGradient(
                         listOf(
-                            Color(0xFF11999E),
-                            Color(0xFF40514E),
+                            Color(0xFF2B2E4A),
+                            Color(0xFFE84545),
                         )
                     )
                 )
@@ -67,6 +67,7 @@ fun CreateContactScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_cancel),
                     contentDescription = null,
+                    tint = Color.White
                 )
             }
             Text(
@@ -75,13 +76,17 @@ fun CreateContactScreen(
                 text = stringResource(R.string.new_contact),
                 fontSize = 25.sp,
                 fontWeight = FontWeight.SemiBold,
+                color = Color.White,
             )
             IconButton(
                 modifier = Modifier.size(25.sp.textSizeToDp()),
-                enabled = viewModel.showDoneButton(),
+                enabled = viewModel.enableDoneButton,
                 onClick = {
-                    viewModel.onSaveButtonClick()
+                    viewModel.onDoneButtonClick()
                 },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.White
+                )
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_done),
@@ -93,7 +98,14 @@ fun CreateContactScreen(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .background(Color(0xFFE4F9F5))
+                .background(
+                    brush = Brush.horizontalGradient(
+                        listOf(
+                            Color(0xFF2B2E4A),
+                            Color(0xFFE84545),
+                        )
+                    )
+                )
                 .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(56.dp))
@@ -147,6 +159,16 @@ fun CreateContactScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                if (viewModel.showScreenMessage) {
+                    viewModel.screenMessage?.asString()?.let {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = it,
+                            color = Color.Red,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
                 var showCollapsedMainFields by remember {
                     mutableStateOf(false)
                 }
@@ -233,8 +255,7 @@ fun CreateContactScreen(
                         placeholderResId = R.string.street,
                     )
                     IconEndField(onClick = {
-                        showCollapsedPostalAddressFields =
-                            showCollapsedPostalAddressFields.not()
+                        showCollapsedPostalAddressFields = showCollapsedPostalAddressFields.not()
                     }, showCollapsedFields = { showCollapsedPostalAddressFields })
                 }
                 if (showCollapsedPostalAddressFields) {

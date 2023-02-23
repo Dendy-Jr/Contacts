@@ -49,14 +49,6 @@ fun ContactsScreen(
     viewModel: ContactsViewModel = hiltViewModel(),
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        BubbleAnimation(
-            bubbleColor1 = Color(0xFFE4F9F5),
-            bubbleColor2 = Color(0xFF30E3CA),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(500.dp)
-                .align(Alignment.Center)
-        )
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
@@ -64,8 +56,8 @@ fun ContactsScreen(
                     .background(
                         brush = Brush.horizontalGradient(
                             listOf(
-                                Color(0xFF11999E),
-                                Color(0xFF40514E),
+                                Color(0xFF2B2E4A),
+                                Color(0xFFE84545),
                             )
                         )
                     )
@@ -79,16 +71,18 @@ fun ContactsScreen(
                         modifier = Modifier.weight(1F),
                         text = stringResource(R.string.contacts),
                         textAlign = TextAlign.Start,
-                        fontSize = 36.sp,
+                        fontSize = 40.sp,
+                        color = Color.White,
                         fontWeight = FontWeight.ExtraBold,
                     )
                     IconButton(
                         onClick = { onNextClick() },
                     ) {
                         Icon(
-                            modifier = Modifier.size(36.sp.textSizeToDp()),
+                            modifier = Modifier.size(40.sp.textSizeToDp()),
                             imageVector = Icons.Filled.Add,
                             contentDescription = null,
+                            tint = Color.White,
                         )
                     }
                 }
@@ -144,6 +138,14 @@ fun ContactsScreen(
                 }
             }
         }
+        BubbleAnimation(
+            bubbleColor1 = Color(0xFF903749),
+            bubbleColor2 = Color(0xFF53354A),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .align(Alignment.Center)
+        )
     }
 }
 

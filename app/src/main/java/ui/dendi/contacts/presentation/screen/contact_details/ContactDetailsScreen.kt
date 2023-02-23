@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,8 +46,8 @@ fun ContactDetailsScreen(
                 .background(
                     brush = Brush.horizontalGradient(
                         listOf(
-                            Color(0xFF11999E),
-                            Color(0xFF40514E),
+                            Color(0xFF2B2E4A),
+                            Color(0xFFE84545),
                         )
                     )
                 )
@@ -59,13 +60,22 @@ fun ContactDetailsScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = null,
+                    tint = Color.White,
                 )
             }
         }
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .background(Color(0xFFE4F9F5))
+                .background(
+                    brush = Brush.horizontalGradient(
+                        listOf(
+                            Color(0xFF2B2E4A),
+                            Color(0xFFE84545),
+                        )
+                    )
+                )
                 .padding(horizontal = 16.dp)
         ) {
             Column(
@@ -88,14 +98,20 @@ fun ContactDetailsScreen(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "${contact.lastName} ${contact.firstName}",
-                    fontSize = 24.sp
+                    fontSize = 24.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
                 )
-                Text(
-                    text = contact.phoneNumber.number,
-                    fontSize = 18.sp
-                )
+                if (contact.phoneNumber.number.isNotEmpty()) {
+                    Text(
+                        text = contact.phoneNumber.number,
+                        fontSize = 18.sp,
+                        color = Color.White,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
