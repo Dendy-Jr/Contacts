@@ -129,11 +129,10 @@ fun ContactsScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
             val contacts by viewModel.contacts.collectAsState()
-
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 16.dp),
             ) {
-                items(contacts) { contact ->
+                items(contacts, key = { it.id }) { contact ->
                     ContactItem(contact, navHostController)
                 }
             }

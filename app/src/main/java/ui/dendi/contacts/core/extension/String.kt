@@ -6,6 +6,6 @@ fun String.containsNumber(): Boolean {
 }
 
 fun String.containsSpecialChar(): Boolean {
-    val regex = Regex(".*[^A-Za-z\\d]+.*")
+    val regex = Regex(".*[^A-Za-zА-Яа-яЇїІіЄєҐґ'\\d]+.*")
     return regex.matches(this)
 }

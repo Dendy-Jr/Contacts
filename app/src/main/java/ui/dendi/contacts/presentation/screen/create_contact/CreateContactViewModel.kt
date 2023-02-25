@@ -47,7 +47,7 @@ class CreateContactViewModel @Inject constructor(
 
     var screenMessage by mutableStateOf<UiText?>(null)
         private set
-    var showScreenMessage by mutableStateOf(true)
+    var showScreenMessage by mutableStateOf(false)
         private set
 
     fun updateFullName(fullName: String) {
@@ -193,8 +193,8 @@ class CreateContactViewModel @Inject constructor(
                     calendar = calendar
                 )
             )
-            _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(resId = R.string.contact_created)))
             _uiEvent.send(UiEvent.Success)
+//            _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(resId = R.string.contact_created)))
         }
     }
 
