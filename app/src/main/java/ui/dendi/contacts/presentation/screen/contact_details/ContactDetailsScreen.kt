@@ -14,7 +14,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -43,24 +42,14 @@ fun ContactDetailsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            Color(0xFF2B2E4A),
-                            Color(0xFFE84545),
-                        )
-                    )
-                )
+                .background(Color.Black)
                 .padding(all = 16.dp),
         ) {
-            IconButton(
-                modifier = Modifier.size(25.dp),
-                onClick = { onBackClicked() }
-            ) {
+            IconButton(modifier = Modifier.size(25.dp), onClick = { onBackClicked() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = Color(0xFF417efd),
                 )
             }
         }
@@ -68,14 +57,7 @@ fun ContactDetailsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .background(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            Color(0xFF2B2E4A),
-                            Color(0xFFE84545),
-                        )
-                    )
-                )
+                .background(Color.Black)
                 .padding(horizontal = 16.dp)
         ) {
             Column(
@@ -87,8 +69,7 @@ fun ContactDetailsScreen(
                     modifier = Modifier
                         .size(200.dp)
                         .clip(CircleShape),
-                    painter =
-                    if (contact.imagePath.isNotEmpty()) {
+                    painter = if (contact.imagePath.isNotEmpty()) {
                         rememberAsyncImagePainter(contact.imagePath)
                     } else {
                         painterResource(
@@ -102,8 +83,8 @@ fun ContactDetailsScreen(
                 Text(
                     text = "${contact.lastName} ${contact.firstName}",
                     fontSize = 24.sp,
-                    color = Color.White,
                     fontWeight = FontWeight.Medium,
+                    color = Color.White,
                 )
                 if (contact.phoneNumber.number.isNotEmpty()) {
                     Text(
@@ -115,10 +96,7 @@ fun ContactDetailsScreen(
             }
 
             val showMainSection = listOf(
-                contact.fullName,
-                contact.gender,
-                contact.birthday,
-                contact.occupation
+                contact.fullName, contact.gender, contact.birthday, contact.occupation
             ).any { it.isNotEmpty() }
 
             if (showMainSection) {
@@ -138,6 +116,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.occupation,
+                        showDivider = false,
                         value = contact.occupation,
                     )
                 }
@@ -163,6 +142,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.type,
+                        showDivider = false,
                         value = phone.type,
                     )
                 }
@@ -213,6 +193,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.type,
+                        showDivider = false,
                         value = address.type,
                     )
                 }
@@ -238,6 +219,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.type,
+                        showDivider = false,
                         value = email.type,
                     )
                 }
@@ -273,6 +255,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.department,
+                        showDivider = false,
                         value = organization.department,
                     )
                 }
@@ -298,6 +281,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.department,
+                        showDivider = false,
                         value = website.type,
                     )
                 }
@@ -323,6 +307,7 @@ fun ContactDetailsScreen(
                     )
                     ContactInformation(
                         titleResId = R.string.type,
+                        showDivider = false,
                         value = calendar.type,
                     )
                 }

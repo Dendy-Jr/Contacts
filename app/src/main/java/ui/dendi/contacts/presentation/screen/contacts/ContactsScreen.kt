@@ -21,9 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,19 +48,16 @@ fun ContactsScreen(
     modifier: Modifier = Modifier,
     viewModel: ContactsViewModel = hiltViewModel(),
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(
-                                Color(0xFF2B2E4A),
-                                Color(0xFFE84545),
-                            )
-                        )
-                    )
+                    .background(Color.Black)
                     .padding(all = 16.dp),
             ) {
                 Row(
@@ -72,8 +69,8 @@ fun ContactsScreen(
                         text = stringResource(R.string.contacts),
                         textAlign = TextAlign.Start,
                         fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        fontWeight = FontWeight.ExtraBold,
                     )
                     IconButton(
                         onClick = { onNextClick() },
@@ -81,8 +78,8 @@ fun ContactsScreen(
                         Icon(
                             modifier = Modifier.size(40.sp.textSizeToDp()),
                             imageVector = Icons.Filled.Add,
-                            contentDescription = null,
-                            tint = Color.White,
+                            contentDescription = "Add",
+                            tint = Color(0xFF417efd),
                         )
                     }
                 }
@@ -98,7 +95,8 @@ fun ContactsScreen(
                             shape = RoundedCornerShape(25.dp),
                         )
                         .height(50.dp)
-                        .shadow(3.dp, RoundedCornerShape(25.dp)),
+                        .shadow(3.dp, RoundedCornerShape(25.dp))
+                        .testTag("Search"),
                     value = searchText,
                     onValueChange = viewModel::onSearchTextChange,
                     placeholder = { Text(text = stringResource(R.string.search_hint)) },
@@ -130,7 +128,9 @@ fun ContactsScreen(
             Spacer(modifier = Modifier.height(8.dp))
             val contacts by viewModel.contacts.collectAsState()
             LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .testTag("ContactList"),
             ) {
                 items(contacts, key = { it.id }) { contact ->
                     ContactItem(contact, navHostController)
@@ -138,8 +138,8 @@ fun ContactsScreen(
             }
         }
         BubbleAnimation(
-            bubbleColor1 = Color(0xFF903749),
-            bubbleColor2 = Color(0xFF53354A),
+            bubbleColor1 = Color(0xFF292c31),
+            bubbleColor2 = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(500.dp)
@@ -182,7 +182,8 @@ private fun ContactItem(contact: Person, navHostController: NavHostController) {
             text = contactName,
             fontSize = 16.sp,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            color = Color.White,
         )
     }
     Divider(color = Color.LightGray, thickness = 1.dp)

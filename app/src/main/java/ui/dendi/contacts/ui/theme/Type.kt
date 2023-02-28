@@ -9,16 +9,15 @@ import androidx.compose.ui.unit.sp
 import ui.dendi.contacts.R
 
 // Set of Material typography styles to start with
-val Acme = FontFamily(
-    Font(R.font.acme)
-)
-val Bellefair = FontFamily(
-    Font(R.font.bellefair)
+val Roboto = FontFamily(
+    Font(R.font.roboto_light, FontWeight.Light),
+    Font(R.font.roboto),
+    Font(R.font.roboto_bold, FontWeight.Bold),
 )
 
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = Bellefair,
+        fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
