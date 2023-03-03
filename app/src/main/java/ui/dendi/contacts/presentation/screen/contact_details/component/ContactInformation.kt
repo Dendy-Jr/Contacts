@@ -1,8 +1,6 @@
 package ui.dendi.contacts.presentation.screen.contact_details.component
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -16,10 +14,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ContactInformation(
+    value: String,
     @StringRes titleResId: Int,
     showDivider: Boolean = true,
-    value: String,
-) {
+    ) {
     if (value.isNotEmpty()) {
         Text(
             text = stringResource(titleResId),
@@ -28,7 +26,7 @@ fun ContactInformation(
         )
         Text(
             text = value,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF417efd),
         )

@@ -14,7 +14,7 @@ fun CollapsedMainTextFields(
     fullName: () -> String,
     updateFullName: (String) -> Unit,
     @StringRes fullNameResId: Int,
-    gender: () -> String,
+    genderOptions: List<String>,
     updateGender: (String) -> Unit,
     @StringRes genderResId: Int,
     birthday: () -> String,
@@ -34,11 +34,11 @@ fun CollapsedMainTextFields(
         onTextChanged = updateFullName,
         placeholderResId = fullNameResId,
     )
-    TextFieldItem(
+    GenderDropdownMenu(
         modifier = modifier,
-        value = gender(),
-        onTextChanged = updateGender,
-        placeholderResId = genderResId,
+        options = genderOptions,
+        onChangeOption = { updateGender(it) },
+        labelTextId = genderResId,
     )
     TextFieldItem(
         modifier = modifier,

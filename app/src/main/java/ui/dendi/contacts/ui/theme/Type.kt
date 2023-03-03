@@ -12,6 +12,7 @@ import ui.dendi.contacts.R
 val Roboto = FontFamily(
     Font(R.font.roboto_light, FontWeight.Light),
     Font(R.font.roboto),
+    Font(R.font.roboto_bold, FontWeight.Medium),
     Font(R.font.roboto_bold, FontWeight.Bold),
 )
 

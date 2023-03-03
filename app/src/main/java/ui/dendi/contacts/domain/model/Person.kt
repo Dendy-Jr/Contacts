@@ -5,7 +5,7 @@ data class Person(
     val fullName: String = "",
     val lastName: String = "",
     val firstName: String = "",
-    val gender: String = "",
+    val gender: Gender = Gender.Male,
     val imagePath: String = "",
     val birthday: String = "",
     val occupation: String = "",
@@ -26,6 +26,11 @@ data class Person(
             it.contains(query, ignoreCase = true)
         }
     }
+}
+
+enum class Gender {
+    Male,
+    Female,
 }
 
 data class PhoneNumber(

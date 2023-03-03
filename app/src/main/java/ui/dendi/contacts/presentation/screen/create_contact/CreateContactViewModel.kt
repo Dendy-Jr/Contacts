@@ -55,17 +55,17 @@ class CreateContactViewModel @Inject constructor(
     }
 
     fun updateLastName(lastName: String) {
-        person = person.copy(lastName = lastName)
+        person = person.copy(lastName = lastName.trim())
         checkInputValidation()
     }
 
     fun updateFirstName(firstName: String) {
-        person = person.copy(firstName = firstName)
+        person = person.copy(firstName = firstName.trim())
         checkInputValidation()
     }
 
-    fun updateGender(gender: String) {
-        person = person.copy(gender = gender)
+    fun updateGender(type: String) {
+        person = person.copy(gender = Gender.valueOf(type))
     }
 
     fun updateImagePath(imagePath: String) {

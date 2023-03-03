@@ -9,14 +9,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextSectionTitle(@StringRes textId: Int) {
+fun SectionTextTitle(@StringRes textId: Int) {
     Text(
         modifier = Modifier.padding(start = 30.dp),
         text = stringResource(textId),
-        fontSize = 16.sp,
         fontWeight = FontWeight.Medium,
         color = Color.White,
     )

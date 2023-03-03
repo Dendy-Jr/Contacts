@@ -1,11 +1,11 @@
 package ui.dendi.contacts.data.repository
 
-import android.util.Log
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.ObjectId
+import timber.log.Timber
 import ui.dendi.contacts.data.model.*
 import ui.dendi.contacts.domain.model.*
 import ui.dendi.contacts.domain.repository.ContactsRepository
@@ -36,7 +36,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
             try {
                 person?.let { delete(it) }
             } catch (e: Exception) {
-                Log.d("ContactsRepositoryImpl", "${e.message}")
+                Timber.tag("ContactsRepositoryImpl").d(e.message)
             }
         }
     }
@@ -84,7 +84,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
             fullName = fullName,
             lastName = lastName,
             firstName = firstName,
-            gender = gender,
+            gender = Gender.valueOf(gender),
             imagePath = imagePath,
             birthday = birthday,
             occupation = occupation,
@@ -169,7 +169,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
             fullName = this@toPersonObject.fullName
             lastName = this@toPersonObject.lastName
             firstName = this@toPersonObject.firstName
-            gender = this@toPersonObject.gender
+            gender = this@toPersonObject.gender.name
             imagePath = this@toPersonObject.imagePath
             birthday = this@toPersonObject.birthday
             occupation = this@toPersonObject.occupation

@@ -91,7 +91,7 @@ fun BubbleAnimation(
                     start = Offset(xValue - 90, yValue),
                     end = Offset(xValue + 90, yValue)
                 ),
-                radius = 100F,
+                radius = 70F,
                 center = Offset(xValue, yValue)
             )
             drawCircle(
@@ -109,7 +109,7 @@ fun BubbleAnimation(
                     start = Offset(xValue3 - 90, yValue3),
                     end = Offset(xValue3 + 90, yValue3)
                 ),
-                radius = 90F,
+                radius = 50F,
                 center = Offset(xValue3, yValue3)
             )
             drawCircle(
@@ -118,7 +118,7 @@ fun BubbleAnimation(
                     start = Offset(xValue4 - 90, yValue4),
                     end = Offset(xValue4 + 90, yValue4)
                 ),
-                radius = 80F,
+                radius = 35F,
                 center = Offset(xValue4, yValue4)
             )
         }

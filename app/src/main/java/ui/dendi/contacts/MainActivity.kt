@@ -5,15 +5,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.*
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import ui.dendi.contacts.navigation.Navigator
 import ui.dendi.contacts.ui.theme.ContactsTheme
+import ui.dendi.contacts.ui.theme.Tundora
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,12 +24,25 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ContactsTheme {
+                val systemUiController = rememberSystemUiController()
+                SideEffect {
+                    systemUiController.setStatusBarColor(
+                        color = Tundora,
+                        darkIcons = false,
+                    )
+                    systemUiController.setNavigationBarColor(
+                        color = Tundora,
+                        darkIcons = false,
+                    )
+                }
                 val snackbarHostState = remember { SnackbarHostState() }
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                 ) {
-                    Navigator(snackbarHostState)
+                    Surface(modifier = Modifier.fillMaxSize()) {
+                        Navigator(snackbarHostState)
+                    }
                 }
             }
         }
