@@ -1,4 +1,4 @@
-package ui.dendi.contacts.presentation.screen.create_contact.components
+package ui.dendi.contacts.presentation.component.create_edit
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,12 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CollapsedEmailAddressTextFields(
+fun CollapsedWebsiteTextFields(
     label: () -> String,
-    updateEmailAddressLabel: (String) -> Unit,
+    updateWebsiteLabel: (String) -> Unit,
     @StringRes labelResId: Int,
     type: () -> String,
-    updateEmailAddressType: (String) -> Unit,
+    updateWebsiteType: (String) -> Unit,
     @StringRes typeResId: Int,
 ) {
     val modifier = Modifier
@@ -23,13 +23,13 @@ fun CollapsedEmailAddressTextFields(
     TextFieldItem(
         modifier = modifier,
         value = label(),
-        onTextChanged = updateEmailAddressLabel,
+        onTextChanged = updateWebsiteLabel,
         placeholderResId = labelResId,
     )
     TextFieldItem(
         modifier = modifier,
         value = type(),
-        onTextChanged = updateEmailAddressType,
+        onTextChanged = updateWebsiteType,
         placeholderResId = typeResId,
     )
 }

@@ -34,8 +34,8 @@ import ui.dendi.contacts.ui.theme.Tundora
 @Composable
 fun ContactDetailsScreen(
     id: String,
-    onBackClicked: () -> Unit,
-    onNextClick: () -> Unit,
+    onNavigateToContacts: () -> Unit,
+    onEditClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ContactDetailsViewModel = hiltViewModel(),
 ) {
@@ -46,7 +46,7 @@ fun ContactDetailsScreen(
     LaunchedEffect(key1 = true) {
         viewModel.event.collect { event ->
             when (event) {
-                is UiEvent.Success -> onNextClick()
+                is UiEvent.Success -> onNavigateToContacts()
                 is UiEvent.ShowSnackbar -> {}
             }
         }
@@ -58,6 +58,7 @@ fun ContactDetailsScreen(
                 .fillMaxWidth()
                 .background(Tundora)
                 .padding(all = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             IconButton(
                 modifier = Modifier
@@ -66,11 +67,28 @@ fun ContactDetailsScreen(
                     .circleLayout()
                     .padding(6.dp),
                 onClick = {
-                    onBackClicked()
+                    onNavigateToContacts()
                 },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    tint = Color.White,
+                )
+            }
+
+            IconButton(
+                modifier = Modifier
+                    .size(30.dp)
+                    .background(Color.Gray, shape = CircleShape)
+                    .circleLayout()
+                    .padding(6.dp),
+                onClick = {
+                    onEditClicked(id)
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit),
                     contentDescription = null,
                     tint = Color.White,
                 )

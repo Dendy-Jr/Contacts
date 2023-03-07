@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.extension_ui.circleLayout
 import ui.dendi.contacts.presentation.screen.contacts.components.ContactItem
@@ -32,8 +31,8 @@ import ui.dendi.contacts.ui.theme.Tundora
 
 @Composable
 fun ContactsScreen(
-    onNextClick: () -> Unit,
-    navHostController: NavHostController,
+    onCreateContactClick: () -> Unit,
+    onNavigateToDetails: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ContactsViewModel = hiltViewModel(),
 ) {
@@ -67,11 +66,10 @@ fun ContactsScreen(
                             .size(35.dp)
                             .background(Color.Gray, shape = CircleShape)
                             .circleLayout()
-                            .padding(8.dp),
-                        onClick = { onNextClick() },
+                            .padding(6.dp),
+                        onClick = { onCreateContactClick() },
                     ) {
                         Icon(
-
                             painter = painterResource(id = R.drawable.ic_add),
                             contentDescription = "Add",
                             tint = Color.White,
@@ -95,9 +93,13 @@ fun ContactsScreen(
                     .padding(horizontal = 16.dp)
                     .testTag("ContactList"),
             ) {
-                itemsIndexed(contacts) { index, contact ->
-                    ContactItem(contact, navHostController)
-
+                itemsIndexed(
+                    items = contacts,
+                    key = { _, item -> item.id },
+                ) { index, contact ->
+                    ContactItem(contact) {
+                        onNavigateToDetails(it)
+                    }
                     if (index < contacts.lastIndex) {
                         Divider(color = Color.LightGray, thickness = 1.dp)
                     }

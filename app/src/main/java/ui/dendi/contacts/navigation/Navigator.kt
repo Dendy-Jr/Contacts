@@ -13,6 +13,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import ui.dendi.contacts.presentation.screen.contact_details.ContactDetailsScreen
 import ui.dendi.contacts.presentation.screen.contacts.ContactsScreen
 import ui.dendi.contacts.presentation.screen.create_contact.CreateContactScreen
+import ui.dendi.contacts.presentation.screen.edit_contact.EditContactScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -24,28 +25,28 @@ fun Navigator(snackbarHostState: SnackbarHostState) {
         startDestination = Route.CONTACTS,
     ) {
         composable(
-            Route.CONTACTS,
+            route = Route.CONTACTS,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
             ContactsScreen(
-                onNextClick = {
+                onCreateContactClick = {
                     navController.navigate(Route.CREATE_CONTACT)
                 },
-                navHostController = navController,
+                onNavigateToDetails = { id ->
+                    navController.navigate(Route.DETAILS + "/$id")
+                },
             )
         }
         composable(
-            Route.CREATE_CONTACT,
+            route = Route.CREATE_CONTACT,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
             CreateContactScreen(
                 snackbarHostState = snackbarHostState,
-                onDoneClick = {
-                    navController.navigate(Route.CONTACTS) {
-                        popUpTo(0)
-                    }
+                onNavigateToDetails = { id ->
+                    navController.navigate(Route.DETAILS + "/$id")
                 },
                 onCancelClick = {
                     navController.popBackStack()
@@ -62,13 +63,31 @@ fun Navigator(snackbarHostState: SnackbarHostState) {
         ) {
             ContactDetailsScreen(
                 id = it.arguments?.getString("id") ?: return@composable,
-                onBackClicked = {
-                    navController.popBackStack()
-                },
-                onNextClick = {
+                onNavigateToContacts = {
                     navController.navigate(Route.CONTACTS) {
                         popUpTo(0)
                     }
+                },
+                onEditClicked = { id ->
+                    navController.navigate(Route.EDIT_CONTACT + "/$id")
+                }
+            )
+        }
+        composable(
+            route = Route.EDIT_CONTACT + "/{id}",
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            }),
+        ) {
+            EditContactScreen(
+                snackbarHostState = snackbarHostState,
+                onNavigateToDetails = { id ->
+                    navController.navigate(Route.DETAILS + "/$id")
+                },
+                onCancelClick = {
+                    navController.popBackStack()
                 }
             )
         }

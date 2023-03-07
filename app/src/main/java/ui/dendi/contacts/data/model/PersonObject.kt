@@ -1,12 +1,13 @@
 package ui.dendi.contacts.data.model
 
+import io.realm.kotlin.types.EmbeddedRealmObject
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import org.mongodb.kbson.BsonObjectId
 
 class PersonObject : RealmObject {
     @PrimaryKey
-    var id: ObjectId = ObjectId.invoke()
+    var id: String = BsonObjectId().toHexString()
     var fullName: String = ""
     var lastName: String = ""
     var firstName: String = ""
@@ -22,13 +23,13 @@ class PersonObject : RealmObject {
     var calendar: CalendarObject? = null
 }
 
-class PhoneNumberObject : RealmObject {
+class PhoneNumberObject : EmbeddedRealmObject {
     var number: String = ""
     var label: String = ""
     var type: String = ""
 }
 
-class PostalAddressObject : RealmObject {
+class PostalAddressObject : EmbeddedRealmObject {
     var street: String = ""
     var city: String = ""
     var region: String = ""
@@ -39,13 +40,13 @@ class PostalAddressObject : RealmObject {
     var type: String = ""
 }
 
-class EmailAddressObject : RealmObject {
+class EmailAddressObject : EmbeddedRealmObject {
     var emailAddress: String = ""
     var type: String = ""
     var label: String = ""
 }
 
-class OrganizationObject : RealmObject {
+class OrganizationObject : EmbeddedRealmObject {
     var name: String = ""
     var label: String = ""
     var jobTitle: String = ""
@@ -53,13 +54,13 @@ class OrganizationObject : RealmObject {
     var department: String = ""
 }
 
-class WebsiteObject : RealmObject {
+class WebsiteObject : EmbeddedRealmObject {
     var link: String = ""
     var label: String = ""
     var type: String = ""
 }
 
-class CalendarObject : RealmObject {
+class CalendarObject : EmbeddedRealmObject {
     var link: String = ""
     var label: String = ""
     var type: String = ""

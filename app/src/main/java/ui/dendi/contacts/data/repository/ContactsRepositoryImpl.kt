@@ -4,7 +4,6 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.mongodb.kbson.ObjectId
 import timber.log.Timber
 import ui.dendi.contacts.data.model.*
 import ui.dendi.contacts.domain.model.*
@@ -25,18 +24,67 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
         realm.write { copyToRealm(person.toPersonObject()) }
     }
 
+    override suspend fun updateContact(person: Person) {
+        realm.write {
+            val queriedPerson = query<PersonObject>(query = "id == $0", person.id).first().find()
+            queriedPerson?.let { personObject ->
+                personObject.fullName = person.fullName
+                personObject.lastName = person.lastName
+                personObject.firstName = person.firstName
+                personObject.gender = person.gender.name
+                personObject.phoneNumber?.let { phoneNumberObject ->
+                    phoneNumberObject.number = person.phoneNumber.number
+                    phoneNumberObject.label = person.phoneNumber.label
+                    phoneNumberObject.type = person.phoneNumber.type
+                }
+                personObject.postalAddress?.let { postalAddressObject ->
+                    postalAddressObject.street = person.postalAddress.street
+                    postalAddressObject.city = person.postalAddress.city
+                    postalAddressObject.region = person.postalAddress.region
+                    postalAddressObject.neighborhood = person.postalAddress.neighborhood
+                    postalAddressObject.postCode = person.postalAddress.postCode
+                    postalAddressObject.country = person.postalAddress.country
+                    postalAddressObject.label = person.postalAddress.label
+                    postalAddressObject.type = person.postalAddress.type
+                }
+                personObject.emailAddress?.let { emailAddressObject ->
+                    emailAddressObject.emailAddress = person.emailAddress.link
+                    emailAddressObject.type = person.emailAddress.type
+                    emailAddressObject.label = person.emailAddress.label
+                }
+                personObject.organization?.let { organizationObject ->
+                    organizationObject.name = person.organization.name
+                    organizationObject.label = person.organization.label
+                    organizationObject.jobTitle = person.organization.jobTitle
+                    organizationObject.jobDescription = person.organization.jobDescription
+                    organizationObject.department = person.organization.department
+                }
+                personObject.website?.let { websiteObject ->
+                    websiteObject.link = person.website.link
+                    websiteObject.label = person.website.label
+                    websiteObject.type = person.website.type
+                }
+                personObject.calendar?.let { calendarObject ->
+                    calendarObject.link = person.calendar.link
+                    calendarObject.label = person.calendar.label
+                    calendarObject.type = person.calendar.type
+                }
+            }
+        }
+    }
+
     override suspend fun getContact(id: String): Person? {
-        val person = realm.query<PersonObject>(query = "id == $0", ObjectId(id)).first().find()
+        val person = realm.query<PersonObject>(query = "id == $0", id).first().find()
         return person?.toPerson()
     }
 
     override suspend fun deleteContact(id: String) {
         realm.write {
-            val person = query<PersonObject>(query = "id == $0", ObjectId(id)).first().find()
+            val person = query<PersonObject>(query = "id == $0", id).first().find()
             try {
                 person?.let { delete(it) }
             } catch (e: Exception) {
-                Timber.tag("ContactsRepositoryImpl").d(e.message)
+                Timber.tag("ContactsRepositoryImpl").d(e)
             }
         }
     }
@@ -80,7 +128,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun PersonObject.toPerson(): Person {
         return Person(
-            id = id.toHexString(),
+            id = id,
             fullName = fullName,
             lastName = lastName,
             firstName = firstName,
@@ -166,6 +214,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
 
     private fun Person.toPersonObject(): PersonObject {
         return PersonObject().apply {
+            id = this@toPersonObject.id
             fullName = this@toPersonObject.fullName
             lastName = this@toPersonObject.lastName
             firstName = this@toPersonObject.firstName

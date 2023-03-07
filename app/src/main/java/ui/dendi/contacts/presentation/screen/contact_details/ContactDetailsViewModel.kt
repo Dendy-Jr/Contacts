@@ -18,7 +18,6 @@ class ContactDetailsViewModel @Inject constructor(
 
     private val _event = Channel<UiEvent>()
     val event = _event.receiveAsFlow()
-
     suspend fun getContactDetails(id: String): Person? {
         return contactsRepository.getContact(id)
     }

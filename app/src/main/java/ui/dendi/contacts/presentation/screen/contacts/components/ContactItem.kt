@@ -14,15 +14,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.extension_ui.setImageByPath
 import ui.dendi.contacts.domain.model.Person
-import ui.dendi.contacts.navigation.Route
 import ui.dendi.contacts.presentation.component.textSizeToDp
 
 @Composable
-fun ContactItem(contact: Person, navHostController: NavHostController) {
+fun ContactItem(contact: Person, onItemClick: (String) -> Unit) {
     val isEnglishLetters = contact.firstName.all() { it in 'a'..'z' || it in 'A'..'Z' }
     val contactName = if (isEnglishLetters) {
         "${contact.firstName} ${contact.lastName}"
@@ -34,7 +32,7 @@ fun ContactItem(contact: Person, navHostController: NavHostController) {
             .fillMaxWidth()
             .padding(vertical = 6.dp)
             .clickable {
-                navHostController.navigate(Route.DETAILS + "/${contact.id}")
+                onItemClick(contact.id)
             },
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically

@@ -1,4 +1,4 @@
-package ui.dendi.contacts.presentation.screen.create_contact
+package ui.dendi.contacts.presentation.screen.edit_contact
 
 import android.content.ContentResolver
 import android.content.Intent
@@ -43,13 +43,14 @@ import ui.dendi.contacts.ui.theme.Tundora
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CreateContactScreen(
+fun EditContactScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     onNavigateToDetails: (String) -> Unit,
     onCancelClick: () -> Unit,
-    viewModel: CreateContactViewModel = hiltViewModel(),
+    viewModel: EditContactViewModel = hiltViewModel(),
 ) {
+
     val person = viewModel.person
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -97,7 +98,7 @@ fun CreateContactScreen(
                 Text(
                     modifier = Modifier.weight(1F),
                     textAlign = TextAlign.Center,
-                    text = stringResource(R.string.new_contact),
+                    text = stringResource(R.string.edit_contact),
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -178,7 +179,7 @@ fun CreateContactScreen(
                         },
                     ) {
                         Text(
-                            text = stringResource(R.string.add_photo),
+                            text = stringResource(R.string.edit_photo),
                             color = Color.Blue,
                         )
                     }

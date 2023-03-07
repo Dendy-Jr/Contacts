@@ -1,4 +1,4 @@
-package ui.dendi.contacts.presentation.screen.create_contact.components
+package ui.dendi.contacts.presentation.component.create_edit
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth

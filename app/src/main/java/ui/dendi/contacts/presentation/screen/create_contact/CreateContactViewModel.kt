@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import org.mongodb.kbson.ObjectId
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.core.model.UiText
@@ -184,7 +183,6 @@ class CreateContactViewModel @Inject constructor(
         viewModelScope.launch {
             repository.insertContact(
                 person = person.copy(
-                    id = ObjectId.invoke().toString(),
                     phoneNumber = phoneNumber,
                     postalAddress = postalAddress,
                     emailAddress = emailAddress,
@@ -194,7 +192,6 @@ class CreateContactViewModel @Inject constructor(
                 )
             )
             _uiEvent.send(UiEvent.Success)
-//            _uiEvent.send(UiEvent.ShowSnackbar(UiText.StringResource(resId = R.string.contact_created)))
         }
     }
 

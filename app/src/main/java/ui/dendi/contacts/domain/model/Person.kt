@@ -1,7 +1,9 @@
 package ui.dendi.contacts.domain.model
 
+import org.mongodb.kbson.BsonObjectId
+
 data class Person(
-    val id: String = "",
+    val id: String = BsonObjectId().toHexString(),
     val fullName: String = "",
     val lastName: String = "",
     val firstName: String = "",
@@ -21,6 +23,8 @@ data class Person(
             "$firstName$lastName",
             "$firstName $lastName",
             "${firstName.first()} ${lastName.first()}",
+            phoneNumber.number,
+            "${phoneNumber.number.first()}",
         )
         return matchingCombinations.any {
             it.contains(query, ignoreCase = true)

@@ -1,4 +1,4 @@
-package ui.dendi.contacts.presentation.screen.create_contact.components
+package ui.dendi.contacts.presentation.component.create_edit
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,12 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CollapsedPhoneTextFields(
+fun CollapsedCalendarTextFields(
     label: () -> String,
-    updatePhoneNumberLabel: (String) -> Unit,
+    updateCalendarLabel: (String) -> Unit,
     @StringRes labelResId: Int,
     type: () -> String,
-    updatePhoneNumberType: (String) -> Unit,
+    updateCalendarType: (String) -> Unit,
     @StringRes typeResId: Int,
 ) {
     val modifier = Modifier
@@ -23,13 +23,13 @@ fun CollapsedPhoneTextFields(
     TextFieldItem(
         modifier = modifier,
         value = label(),
-        onTextChanged = updatePhoneNumberLabel,
+        onTextChanged = updateCalendarLabel,
         placeholderResId = labelResId,
     )
     TextFieldItem(
         modifier = modifier,
         value = type(),
-        onTextChanged = updatePhoneNumberType,
+        onTextChanged = updateCalendarType,
         placeholderResId = typeResId,
     )
 }

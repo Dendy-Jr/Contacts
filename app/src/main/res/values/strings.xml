@@ -29,7 +29,9 @@
     <string name="website_title">Website</string>
     <string name="calendar_title">Calendar</string>
     <string name="new_contact">New Contact</string>
+    <string name="edit_contact">Edit Contact</string>
     <string name="add_photo">Add Photo</string>
+    <string name="edit_photo">Edit Photo</string>
     <string name="contacts">Contacts</string>
     <string name="search_hint">Search</string>
     <string name="name_cannot_be_empty">The first or last name cannot be empty</string>

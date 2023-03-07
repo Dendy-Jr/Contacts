@@ -17,18 +17,18 @@ fun ContactInformation(
     value: String,
     @StringRes titleResId: Int,
     showDivider: Boolean = true,
-    ) {
+) {
     if (value.isNotEmpty()) {
         Text(
             text = stringResource(titleResId),
             fontWeight = FontWeight.Normal,
-            color = Color.White,
+            color = Color.LightGray,
         )
         Text(
             text = value,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF417efd),
+            color = Color.White,
         )
         if (showDivider) {
             Divider(
