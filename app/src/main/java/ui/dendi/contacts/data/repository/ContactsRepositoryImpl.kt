@@ -32,6 +32,7 @@ class ContactsRepositoryImpl @Inject constructor(val realm: Realm) : ContactsRep
                 personObject.lastName = person.lastName
                 personObject.firstName = person.firstName
                 personObject.gender = person.gender.name
+                personObject.imagePath = person.imagePath
                 personObject.phoneNumber?.let { phoneNumberObject ->
                     phoneNumberObject.number = person.phoneNumber.number
                     phoneNumberObject.label = person.phoneNumber.label

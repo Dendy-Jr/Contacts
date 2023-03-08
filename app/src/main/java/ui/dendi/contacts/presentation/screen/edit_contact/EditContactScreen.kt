@@ -1,7 +1,5 @@
 package ui.dendi.contacts.presentation.screen.edit_contact
 
-import android.content.ContentResolver
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -32,13 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.extension_ui.circleLayout
+import ui.dendi.contacts.core.extension_ui.setImageByPath
 import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.domain.model.Gender
 import ui.dendi.contacts.presentation.component.create_edit.*
-import ui.dendi.contacts.presentation.screen.create_contact.components.*
 import ui.dendi.contacts.ui.theme.Tundora
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -139,16 +136,6 @@ fun EditContactScreen(
                     rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
                         onResult = { uri -> selectedImageUri = uri })
 
-                LocalContext.current.contentResolver.let { contentResolver: ContentResolver ->
-                    val readUriPermission: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    selectedImageUri?.let {
-                        contentResolver.takePersistableUriPermission(
-                            it,
-                            readUriPermission
-                        )
-                    }
-                }
-
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -164,10 +151,14 @@ fun EditContactScreen(
                             },
                         painter = selectedImageUri?.let {
                             viewModel.updateImagePath(it.toString())
-                            rememberAsyncImagePainter(it)
-                        } ?: painterResource(
-                            id = R.drawable.ic_add_photo
-                        ),
+                            it.setImageByPath()
+                        } ?: if (person.imagePath.isEmpty()) {
+                            painterResource(
+                                id = R.drawable.ic_add_photo
+                            )
+                        } else {
+                            person.imagePath.setImageByPath()
+                        },
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                     )

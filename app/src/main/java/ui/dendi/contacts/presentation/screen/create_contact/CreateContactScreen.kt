@@ -38,7 +38,6 @@ import ui.dendi.contacts.core.extension_ui.circleLayout
 import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.domain.model.Gender
 import ui.dendi.contacts.presentation.component.create_edit.*
-import ui.dendi.contacts.presentation.screen.create_contact.components.*
 import ui.dendi.contacts.ui.theme.Tundora
 
 @OptIn(ExperimentalComposeUiApi::class)

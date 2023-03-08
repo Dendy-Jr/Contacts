@@ -15,13 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import ui.dendi.contacts.R
+import ui.dendi.contacts.core.extension.shareText
 import ui.dendi.contacts.core.extension_ui.circleLayout
 import ui.dendi.contacts.core.extension_ui.setImageByPath
 import ui.dendi.contacts.core.model.UiEvent
@@ -39,6 +42,7 @@ fun ContactDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: ContactDetailsViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val contact = produceState<Person?>(initialValue = null) {
         value = viewModel.getContactDetails(id)
     }.value ?: return
@@ -106,14 +110,43 @@ fun ContactDetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Image(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(CircleShape),
-                    painter = contact.imagePath.setImageByPath(R.drawable.ic_add_photo),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                )
+
+                ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+                    val (avatarImage, shareButton) = createRefs()
+                    Image(
+                        modifier = Modifier
+                            .size(200.dp)
+                            .clip(CircleShape)
+                            .constrainAs(avatarImage) {
+                                top.linkTo(parent.top)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            },
+                        painter = contact.imagePath.setImageByPath(R.drawable.ic_add_photo),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+
+                    IconButton(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .size(35.dp)
+                            .constrainAs(shareButton) {
+                                top.linkTo(parent.top)
+                                start.linkTo(avatarImage.end)
+                                bottom.linkTo(parent.bottom)
+                            },
+                        onClick = { context.shareText("${contact.firstName} ${contact.lastName}") }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_share),
+                            contentDescription = null,
+                            tint = Color.White,
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "${contact.lastName} ${contact.firstName}",
@@ -263,10 +296,11 @@ fun ContactDetailsScreen(
                         .padding(horizontal = 32.dp), onClick = {
                         viewModel.onDeleteButtonClick(id)
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                 ) {
                     Text(
                         text = stringResource(R.string.delete_contact),
+                        fontWeight = FontWeight.Medium,
                         fontSize = 18.sp,
                     )
                 }
