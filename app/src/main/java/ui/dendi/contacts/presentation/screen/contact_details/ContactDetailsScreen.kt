@@ -1,5 +1,8 @@
 package ui.dendi.contacts.presentation.screen.contact_details
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,6 +34,7 @@ import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.domain.model.Person
 import ui.dendi.contacts.presentation.screen.contact_details.component.CardSection
 import ui.dendi.contacts.presentation.screen.contact_details.component.DetailsTitle
+import ui.dendi.contacts.presentation.screen.contact_details.component.InteractionItem
 import ui.dendi.contacts.presentation.screen.contact_details.component.SectionContactInformation
 import ui.dendi.contacts.ui.theme.Tundora
 
@@ -163,6 +167,38 @@ fun ContactDetailsScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            val phone = contact.phoneNumber
+            val email = contact.emailAddress
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                InteractionItem(
+                    iconResId = R.drawable.ic_message,
+                    textResId = R.string.message,
+                    enabled = phone.number.isNotEmpty()
+                ) {
+                    sendSms(number = phone.number, context = context)
+
+                }
+                InteractionItem(
+                    iconResId = R.drawable.ic_phone_call,
+                    textResId = R.string.call,
+                    enabled = phone.number.isNotEmpty()
+                ) {
+                    makeCall(number = phone.number, context = context)
+                }
+                InteractionItem(
+                    iconResId = R.drawable.ic_mail,
+                    textResId = R.string.mail,
+                    enabled = email.link.isNotEmpty()
+                ) {
+                    sendMail(email = email.link, context = context)
+                }
+            }
+
             val mainSection = mapOf(
                 contact.fullName to R.string.full_name,
                 contact.gender.name to R.string.gender,
@@ -172,14 +208,13 @@ fun ContactDetailsScreen(
             val showMainSection = mainSection.any { it.key.isNotEmpty() }
 
             if (showMainSection) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 DetailsTitle(iconId = R.drawable.ic_person, textId = R.string.main)
                 CardSection {
                     SectionContactInformation(mainSection)
                 }
             }
 
-            val phone = contact.phoneNumber
             val phoneSection = mapOf(
                 phone.number to R.string.phone_number,
                 phone.label to R.string.label,
@@ -216,7 +251,6 @@ fun ContactDetailsScreen(
                 }
             }
 
-            val email = contact.emailAddress
             val emailSection = mapOf(
                 email.link to R.string.link,
                 email.label to R.string.label,
@@ -307,4 +341,31 @@ fun ContactDetailsScreen(
             }
         }
     }
+}
+
+private fun sendSms(
+    number: String,
+    context: Context,
+) {
+    val smsIntent = Intent(Intent.ACTION_SENDTO)
+    smsIntent.data = Uri.parse("smsto:" + Uri.encode(number))
+    context.startActivity(Intent.createChooser(smsIntent, "Sms"))
+}
+
+private fun makeCall(
+    number: String,
+    context: Context,
+) {
+    val callIntent = Intent(Intent.ACTION_CALL)
+    callIntent.data = Uri.parse("tel:$number")
+    context.startActivity(callIntent)
+}
+
+private fun sendMail(
+    email: String,
+    context: Context,
+) {
+    val mailIntent = Intent(Intent.ACTION_SENDTO)
+    mailIntent.data = Uri.parse("mailto:$email")
+    context.startActivity(Intent.createChooser(mailIntent, "Email"))
 }

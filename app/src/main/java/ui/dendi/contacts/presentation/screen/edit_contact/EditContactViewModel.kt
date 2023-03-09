@@ -61,7 +61,15 @@ class EditContactViewModel @Inject constructor(
 
     private fun getContactById() {
         viewModelScope.launch {
-            person = repository.getContact(id) ?: return@launch
+            repository.getContact(id)?.let { oldDataPerson ->
+                person = oldDataPerson
+                phoneNumber = oldDataPerson.phoneNumber
+                postalAddress = oldDataPerson.postalAddress
+                emailAddress = oldDataPerson.emailAddress
+                organization = oldDataPerson.organization
+                website = oldDataPerson.website
+                calendar = oldDataPerson.calendar
+            } ?: return@launch
         }
     }
 }

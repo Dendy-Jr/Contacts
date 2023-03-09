@@ -21,12 +21,7 @@ import ui.dendi.contacts.presentation.component.textSizeToDp
 
 @Composable
 fun ContactItem(contact: Person, onItemClick: (String) -> Unit) {
-    val isEnglishLetters = contact.firstName.all() { it in 'a'..'z' || it in 'A'..'Z' }
-    val contactName = if (isEnglishLetters) {
-        "${contact.firstName} ${contact.lastName}"
-    } else {
-        "${contact.lastName} ${contact.firstName}"
-    }
+    val contactName = "${contact.firstName} ${contact.lastName}"
     Row(
         modifier = Modifier
             .fillMaxWidth()
