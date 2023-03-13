@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core.delegate.impl
+package ui.dendi.contacts.presentation.delegate
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import ui.dendi.contacts.core.delegate.UpdatePhoneNumberContact
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import ui.dendi.contacts.core.delegate.SectionPhoneNumberDelegate
 import ui.dendi.contacts.domain.model.PhoneNumber
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class UpdatePhoneNumberContactSectionImpl @Inject constructor() : UpdatePhoneNumberContact {
+class SectionPhoneNumberImpl @Inject constructor() : SectionPhoneNumberDelegate {
 
     override var phoneNumber: PhoneNumber by mutableStateOf(PhoneNumber())
 
@@ -30,10 +30,10 @@ class UpdatePhoneNumberContactSectionImpl @Inject constructor() : UpdatePhoneNum
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface UpdatePhoneNumberContactSectionModule {
+@InstallIn(ViewModelComponent::class)
+interface SectionPhoneNumberModule {
 
-    @Singleton
+    @ViewModelScoped
     @Binds
-    fun binds(impl: UpdatePhoneNumberContactSectionImpl): UpdatePhoneNumberContact
+    fun binds(impl: SectionPhoneNumberImpl): SectionPhoneNumberDelegate
 }

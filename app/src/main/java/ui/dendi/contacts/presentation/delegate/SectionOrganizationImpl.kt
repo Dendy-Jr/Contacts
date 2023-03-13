@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core.delegate.impl
+package ui.dendi.contacts.presentation.delegate
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,14 +6,13 @@ import androidx.compose.runtime.setValue
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import ui.dendi.contacts.core.delegate.UpdateOrganizationContact
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import ui.dendi.contacts.core.delegate.SectionOrganizationDelegate
 import ui.dendi.contacts.domain.model.Organization
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class UpdateOrganizationContactSectionImpl @Inject constructor() :
-    UpdateOrganizationContact {
+class SectionOrganizationImpl @Inject constructor() : SectionOrganizationDelegate {
 
     override var organization: Organization by mutableStateOf(Organization())
 
@@ -39,10 +38,10 @@ class UpdateOrganizationContactSectionImpl @Inject constructor() :
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface UpdateOrganizationContactSectionModule {
+@InstallIn(ViewModelComponent::class)
+interface SectionOrganizationModule {
 
-    @Singleton
+    @ViewModelScoped
     @Binds
-    fun binds(impl: UpdateOrganizationContactSectionImpl): UpdateOrganizationContact
+    fun binds(impl: SectionOrganizationImpl): SectionOrganizationDelegate
 }

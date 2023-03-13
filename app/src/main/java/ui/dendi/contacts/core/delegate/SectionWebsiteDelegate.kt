@@ -2,7 +2,7 @@ package ui.dendi.contacts.core.delegate
 
 import ui.dendi.contacts.domain.model.Website
 
-interface UpdateWebsiteContact {
+interface SectionWebsiteDelegate {
 
     var website: Website
     fun updateWebsiteLink(link: String)

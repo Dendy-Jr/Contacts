@@ -2,9 +2,10 @@ package ui.dendi.contacts.core.delegate
 
 import ui.dendi.contacts.domain.model.Person
 
-interface UpdateMainContact {
+interface SectionMainDelegate {
 
     var person: Person
+
     fun updateFullName(fullName: String)
     fun updateLastName(lastName: String)
     fun updateFirstName(firstName: String)

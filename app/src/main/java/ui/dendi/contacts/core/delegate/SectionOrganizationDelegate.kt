@@ -2,7 +2,7 @@ package ui.dendi.contacts.core.delegate
 
 import ui.dendi.contacts.domain.model.Organization
 
-interface UpdateOrganizationContact {
+interface SectionOrganizationDelegate {
 
     var organization: Organization
     fun updateOrganizationName(name: String)

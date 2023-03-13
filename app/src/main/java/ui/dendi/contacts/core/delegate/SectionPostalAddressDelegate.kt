@@ -2,7 +2,7 @@ package ui.dendi.contacts.core.delegate
 
 import ui.dendi.contacts.domain.model.PostalAddress
 
-interface UpdatePostalAddressContact {
+interface SectionPostalAddressDelegate {
 
     var postalAddress: PostalAddress
     fun updateStreet(street: String)

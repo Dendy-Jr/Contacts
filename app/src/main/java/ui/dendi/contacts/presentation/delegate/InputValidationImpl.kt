@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core.delegate.impl
+package ui.dendi.contacts.presentation.delegate
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,28 +6,25 @@ import androidx.compose.runtime.setValue
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.*
 import ui.dendi.contacts.R
-import ui.dendi.contacts.core.delegate.InputValidation
-import ui.dendi.contacts.core.delegate.UpdateMainContact
+import ui.dendi.contacts.core.delegate.InputValidationDelegate
+import ui.dendi.contacts.core.delegate.SectionMainDelegate
 import ui.dendi.contacts.core.model.UiText
 import ui.dendi.contacts.domain.model.ContactInputValidationType
 import ui.dendi.contacts.domain.use_case.ValidateContactInputUseCase
 import javax.inject.Inject
 import javax.inject.Provider
-import javax.inject.Singleton
 
 class InputValidationImpl @Inject constructor(
     private val validateContactInputUseCase: ValidateContactInputUseCase,
-    private val updateMainContact: Provider<UpdateMainContact>,
-) : InputValidation {
+    private val editMainContact: Provider<SectionMainDelegate>,
+) : InputValidationDelegate {
 
-    private val job = SupervisorJob()
-    private val coroutineScope = CoroutineScope(job + Dispatchers.Main.immediate)
+    private val job: Job = SupervisorJob()
+    private val coroutineScope: CoroutineScope = CoroutineScope(job + Dispatchers.Main.immediate)
 
     override var enableDoneButton: Boolean by mutableStateOf(false)
     override var screenMessage: UiText? by mutableStateOf(null)
@@ -35,7 +32,7 @@ class InputValidationImpl @Inject constructor(
 
     override fun checkInputValidation() {
         coroutineScope.launch {
-            val person = updateMainContact.get().person
+            val person = editMainContact.get().person
             val validationResult = validateContactInputUseCase(
                 firstName = person.firstName,
                 lastName = person.lastName
@@ -71,10 +68,10 @@ class InputValidationImpl @Inject constructor(
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 interface InputValidationModule {
 
-    @Singleton
+    @ViewModelScoped
     @Binds
-    fun binds(impl: InputValidationImpl): InputValidation
+    fun binds(impl: InputValidationImpl): InputValidationDelegate
 }

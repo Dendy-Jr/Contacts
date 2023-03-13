@@ -2,7 +2,7 @@ package ui.dendi.contacts.core.delegate
 
 import ui.dendi.contacts.domain.model.PhoneNumber
 
-interface UpdatePhoneNumberContact {
+interface SectionPhoneNumberDelegate {
 
     var phoneNumber: PhoneNumber
     fun updatePhoneNumber(number: String)

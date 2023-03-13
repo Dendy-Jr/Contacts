@@ -2,7 +2,7 @@ package ui.dendi.contacts.core.delegate
 
 import ui.dendi.contacts.domain.model.EmailAddress
 
-interface UpdateEmailAddressContact {
+interface SectionEmailAddressDelegate {
 
     var emailAddress: EmailAddress
     fun updateEmailAddress(link: String)

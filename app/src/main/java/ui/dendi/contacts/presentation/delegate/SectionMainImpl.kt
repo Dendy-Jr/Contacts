@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core.delegate.impl
+package ui.dendi.contacts.presentation.delegate
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,17 +6,17 @@ import androidx.compose.runtime.setValue
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import ui.dendi.contacts.core.delegate.InputValidation
-import ui.dendi.contacts.core.delegate.UpdateMainContact
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import ui.dendi.contacts.core.delegate.InputValidationDelegate
+import ui.dendi.contacts.core.delegate.SectionMainDelegate
 import ui.dendi.contacts.domain.model.Gender
 import ui.dendi.contacts.domain.model.Person
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class UpdateMainContactSectionImpl @Inject constructor(
-    private val inputValidation: InputValidation,
-) : UpdateMainContact {
+class SectionMainImpl @Inject constructor(
+    private val inputValidationDelegate: InputValidationDelegate,
+) : SectionMainDelegate {
 
     override var person: Person by mutableStateOf(Person())
 
@@ -26,12 +26,12 @@ class UpdateMainContactSectionImpl @Inject constructor(
 
     override fun updateLastName(lastName: String) {
         person = person.copy(lastName = lastName.trim())
-        inputValidation.checkInputValidation()
+        inputValidationDelegate.checkInputValidation()
     }
 
     override fun updateFirstName(firstName: String) {
         person = person.copy(firstName = firstName.trim())
-        inputValidation.checkInputValidation()
+        inputValidationDelegate.checkInputValidation()
     }
 
     override fun updateGender(type: String) {
@@ -52,10 +52,10 @@ class UpdateMainContactSectionImpl @Inject constructor(
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface UpdateMainContactSectionModule {
+@InstallIn(ViewModelComponent::class)
+interface SectionMainModule {
 
-    @Singleton
+    @ViewModelScoped
     @Binds
-    fun binds(impl: UpdateMainContactSectionImpl): UpdateMainContact
+    fun binds(impl: SectionMainImpl): SectionMainDelegate
 }

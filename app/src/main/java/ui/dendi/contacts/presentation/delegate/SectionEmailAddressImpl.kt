@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core.delegate.impl
+package ui.dendi.contacts.presentation.delegate
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,14 +6,13 @@ import androidx.compose.runtime.setValue
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import ui.dendi.contacts.core.delegate.UpdateEmailAddressContact
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import ui.dendi.contacts.core.delegate.SectionEmailAddressDelegate
 import ui.dendi.contacts.domain.model.EmailAddress
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class UpdateEmailAddressContactSectionImpl @Inject constructor() :
-    UpdateEmailAddressContact {
+class SectionEmailAddressImpl @Inject constructor() : SectionEmailAddressDelegate {
 
     override var emailAddress: EmailAddress by mutableStateOf(EmailAddress())
 
@@ -31,10 +30,10 @@ class UpdateEmailAddressContactSectionImpl @Inject constructor() :
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface UpdateEmailAddressContactSectionModule {
+@InstallIn(ViewModelComponent::class)
+interface SectionEmailAddressModule {
 
-    @Singleton
+    @ViewModelScoped
     @Binds
-    fun binds(impl: UpdateEmailAddressContactSectionImpl): UpdateEmailAddressContact
+    fun binds(impl: SectionEmailAddressImpl): SectionEmailAddressDelegate
 }

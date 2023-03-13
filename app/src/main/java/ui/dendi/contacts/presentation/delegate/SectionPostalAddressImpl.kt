@@ -1,4 +1,4 @@
-package ui.dendi.contacts.core.delegate.impl
+package ui.dendi.contacts.presentation.delegate
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,14 +6,13 @@ import androidx.compose.runtime.setValue
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import ui.dendi.contacts.core.delegate.UpdatePostalAddressContact
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import ui.dendi.contacts.core.delegate.SectionPostalAddressDelegate
 import ui.dendi.contacts.domain.model.PostalAddress
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class UpdatePostalAddressContactSectionImpl @Inject constructor() :
-    UpdatePostalAddressContact {
+class SectionPostalAddressImpl @Inject constructor() : SectionPostalAddressDelegate {
 
     override var postalAddress: PostalAddress by mutableStateOf(PostalAddress())
 
@@ -51,10 +50,10 @@ class UpdatePostalAddressContactSectionImpl @Inject constructor() :
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface UpdatePostalAddressContactSectionModule {
+@InstallIn(ViewModelComponent::class)
+interface SectionPostalAddressModule {
 
-    @Singleton
+    @ViewModelScoped
     @Binds
-    fun binds(impl: UpdatePostalAddressContactSectionImpl): UpdatePostalAddressContact
+    fun binds(impl: SectionPostalAddressImpl): SectionPostalAddressDelegate
 }
