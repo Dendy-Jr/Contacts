@@ -34,11 +34,15 @@ import androidx.compose.ui.window.Popup
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import ui.dendi.contacts.R
-import ui.dendi.contacts.core.extension_ui.circleLayout
 import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.domain.model.Gender
 import ui.dendi.contacts.presentation.component.create_edit.*
-import ui.dendi.contacts.ui.theme.Tundora
+import ui.dendi.contacts.presentation.screen.create_contact.components.CreateContactBottomBackground
+import ui.dendi.contacts.presentation.screen.create_contact.components.CreateContactHeaderBackground
+import ui.dendi.contacts.ui.theme.Mandy
+import ui.dendi.contacts.ui.theme.MulledWine
+import ui.dendi.contacts.ui.theme.Neptune
+import ui.dendi.contacts.ui.theme.TreePoppy
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -50,6 +54,7 @@ fun CreateContactScreen(
     viewModel: CreateContactViewModel = hiltViewModel(),
 ) {
     val person = viewModel.person
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {
@@ -68,8 +73,20 @@ fun CreateContactScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Tundora)
+            .background(Mandy)
     ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CreateContactHeaderBackground(
+                color = MulledWine,
+                modifier = Modifier.fillMaxSize()
+            )
+            CreateContactBottomBackground(
+                color = Neptune,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         Column(modifier = modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
@@ -80,8 +97,6 @@ fun CreateContactScreen(
                 IconButton(
                     modifier = Modifier
                         .size(30.dp)
-                        .background(Color.Gray, shape = CircleShape)
-                        .circleLayout()
                         .padding(6.dp),
                     onClick = {
                         onCancelClick()
@@ -104,8 +119,6 @@ fun CreateContactScreen(
                 IconButton(
                     modifier = Modifier
                         .size(30.dp)
-                        .background(Color.Gray, shape = CircleShape)
-                        .circleLayout()
                         .padding(6.dp),
                     enabled = viewModel.enableDoneButton,
                     onClick = {
@@ -164,7 +177,7 @@ fun CreateContactScreen(
                             viewModel.updateImagePath(it.toString())
                             rememberAsyncImagePainter(it)
                         } ?: painterResource(
-                            id = R.drawable.ic_add_photo
+                            id = R.drawable.ic_add_photo_white
                         ),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
@@ -178,7 +191,8 @@ fun CreateContactScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.add_photo),
-                            color = Color.Blue,
+                            color = TreePoppy,
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                     if (viewModel.showScreenMessage) {
@@ -237,9 +251,9 @@ fun CreateContactScreen(
                         IconStartField(iconResId = R.drawable.ic_person)
                         TextFieldItem(
                             modifier = Modifier.weight(1F),
-                            value = viewModel.person.firstName,
+                            value = person.firstName,
                             onTextChanged = viewModel::updateFirstName,
-                            isError = viewModel.person.firstName.isBlank(),
+                            isError = person.firstName.isBlank(),
                             placeholderResId = R.string.first_name,
                         )
 
@@ -251,9 +265,9 @@ fun CreateContactScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 30.dp),
-                        value = viewModel.person.lastName,
+                        value = person.lastName,
                         onTextChanged = viewModel::updateLastName,
-                        isError = viewModel.person.lastName.isBlank(),
+                        isError = person.lastName.isBlank(),
                         placeholderResId = R.string.last_name,
                     )
 
@@ -390,6 +404,7 @@ fun CreateContactScreen(
                             value = viewModel.emailAddress.link,
                             onTextChanged = viewModel::updateEmailAddress,
                             placeholderResId = R.string.link,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         )
                         IconEndField(onClick = {
                             showCollapsedEmailAddressFields = showCollapsedEmailAddressFields.not()
@@ -475,6 +490,7 @@ fun CreateContactScreen(
                             value = viewModel.website.link,
                             onTextChanged = viewModel::updateWebsiteLink,
                             placeholderResId = R.string.link,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                         )
                         IconEndField(onClick = {
                             showCollapsedWebsiteFields = showCollapsedWebsiteFields.not()
@@ -513,6 +529,7 @@ fun CreateContactScreen(
                             value = viewModel.calendar.link,
                             onTextChanged = viewModel::updateCalendarLink,
                             placeholderResId = R.string.link,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                         )
                         IconEndField(onClick = {
                             showCollapsedCalendarFields = showCollapsedCalendarFields.not()

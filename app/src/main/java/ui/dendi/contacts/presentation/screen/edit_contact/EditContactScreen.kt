@@ -31,12 +31,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.hilt.navigation.compose.hiltViewModel
 import ui.dendi.contacts.R
-import ui.dendi.contacts.core.extension_ui.circleLayout
 import ui.dendi.contacts.core.extension_ui.setImageByPath
 import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.domain.model.Gender
 import ui.dendi.contacts.presentation.component.create_edit.*
-import ui.dendi.contacts.ui.theme.Tundora
+import ui.dendi.contacts.presentation.screen.edit_contact.component.EditContactBottomBackground
+import ui.dendi.contacts.presentation.screen.edit_contact.component.EditContactHeaderBackground
+import ui.dendi.contacts.ui.theme.Mandy
+import ui.dendi.contacts.ui.theme.MulledWine
+import ui.dendi.contacts.ui.theme.Neptune
+import ui.dendi.contacts.ui.theme.TreePoppy
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -67,8 +71,20 @@ fun EditContactScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Tundora)
+            .background(Mandy)
     ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            EditContactHeaderBackground(
+                modifier = Modifier.fillMaxSize(),
+                color = MulledWine,
+            )
+            EditContactBottomBackground(
+                color = Neptune,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         Column(modifier = modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
@@ -79,8 +95,6 @@ fun EditContactScreen(
                 IconButton(
                     modifier = Modifier
                         .size(30.dp)
-                        .background(Color.Gray, shape = CircleShape)
-                        .circleLayout()
                         .padding(6.dp),
                     onClick = {
                         onCancelClick()
@@ -103,8 +117,6 @@ fun EditContactScreen(
                 IconButton(
                     modifier = Modifier
                         .size(30.dp)
-                        .background(Color.Gray, shape = CircleShape)
-                        .circleLayout()
                         .padding(6.dp),
                     enabled = viewModel.enableDoneButton,
                     onClick = {
@@ -154,7 +166,7 @@ fun EditContactScreen(
                             it.setImageByPath()
                         } ?: if (person.imagePath.isEmpty()) {
                             painterResource(
-                                id = R.drawable.ic_add_photo
+                                id = R.drawable.ic_add_photo_white
                             )
                         } else {
                             person.imagePath.setImageByPath()
@@ -171,7 +183,8 @@ fun EditContactScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.edit_photo),
-                            color = Color.Blue,
+                            color = TreePoppy,
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                     if (viewModel.showScreenMessage) {

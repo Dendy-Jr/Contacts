@@ -19,16 +19,11 @@ fun ContactInformation(
     showDivider: Boolean = true,
 ) {
     if (value.isNotEmpty()) {
-        Text(
-            text = stringResource(titleResId),
-            fontWeight = FontWeight.Normal,
-            color = Color.LightGray,
-        )
+        Text(text = stringResource(titleResId))
         Text(
             text = value,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.White,
         )
         if (showDivider) {
             Divider(

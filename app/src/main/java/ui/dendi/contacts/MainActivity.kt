@@ -16,11 +16,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import ui.dendi.contacts.navigation.Navigator
 import ui.dendi.contacts.ui.theme.ContactsTheme
-import ui.dendi.contacts.ui.theme.Tundora
+import ui.dendi.contacts.ui.theme.Mandy
+import ui.dendi.contacts.ui.theme.MulledWine
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -34,21 +36,20 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
 
         requestCallPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
-
-        //TODO splash screen does not visible on API < 31
 
         setContent {
             ContactsTheme {
                 val systemUiController = rememberSystemUiController()
                 SideEffect {
                     systemUiController.setStatusBarColor(
-                        color = Tundora,
+                        color = MulledWine,
                         darkIcons = false,
                     )
                     systemUiController.setNavigationBarColor(
-                        color = Tundora,
+                        color = Mandy,
                         darkIcons = false,
                     )
                 }

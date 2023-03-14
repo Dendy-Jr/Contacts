@@ -22,21 +22,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import ui.dendi.contacts.R
 import ui.dendi.contacts.core.extension.shareText
-import ui.dendi.contacts.core.extension_ui.circleLayout
 import ui.dendi.contacts.core.extension_ui.setImageByPath
 import ui.dendi.contacts.core.model.UiEvent
 import ui.dendi.contacts.domain.model.Person
-import ui.dendi.contacts.presentation.screen.contact_details.component.CardSection
-import ui.dendi.contacts.presentation.screen.contact_details.component.DetailsTitle
-import ui.dendi.contacts.presentation.screen.contact_details.component.InteractionItem
-import ui.dendi.contacts.presentation.screen.contact_details.component.SectionContactInformation
-import ui.dendi.contacts.ui.theme.Tundora
+import ui.dendi.contacts.presentation.screen.contact_details.component.*
+import ui.dendi.contacts.ui.theme.Mandy
+import ui.dendi.contacts.ui.theme.MulledWine
+import ui.dendi.contacts.ui.theme.Neptune
+import ui.dendi.contacts.ui.theme.TreePoppy
 
 @Composable
 fun ContactDetailsScreen(
@@ -60,283 +60,300 @@ fun ContactDetailsScreen(
         }
     }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Tundora)
-                .padding(all = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Mandy)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            IconButton(
-                modifier = Modifier
-                    .size(30.dp)
-                    .background(Color.Gray, shape = CircleShape)
-                    .circleLayout()
-                    .padding(6.dp),
-                onClick = {
-                    onNavigateToContacts()
-                },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White,
-                )
-            }
-
-            IconButton(
-                modifier = Modifier
-                    .size(30.dp)
-                    .background(Color.Gray, shape = CircleShape)
-                    .circleLayout()
-                    .padding(6.dp),
-                onClick = {
-                    onEditClicked(id)
-                },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = null,
-                    tint = Color.White,
-                )
-            }
+            ContactDetailsHeaderBackground(
+                color = MulledWine,
+                modifier = Modifier.fillMaxSize()
+            )
+            ContactDetailsBottomBackground(
+                color = Neptune,
+                modifier = Modifier.fillMaxSize()
+            )
         }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(Tundora)
-                .padding(horizontal = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-                    val (avatarImage, shareButton) = createRefs()
-                    Image(
-                        modifier = Modifier
-                            .size(200.dp)
-                            .clip(CircleShape)
-                            .constrainAs(avatarImage) {
-                                top.linkTo(parent.top)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        painter = contact.imagePath.setImageByPath(R.drawable.ic_add_photo),
+                IconButton(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(6.dp),
+                    onClick = {
+                        onNavigateToContacts()
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
                         contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                        tint = Color.White,
                     )
+                }
 
-                    IconButton(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(35.dp)
-                            .constrainAs(shareButton) {
-                                top.linkTo(parent.top)
-                                start.linkTo(avatarImage.end)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        onClick = { context.shareText("${contact.firstName} ${contact.lastName}") }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_share),
+                IconButton(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(6.dp),
+                    onClick = {
+                        onEditClicked(id)
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit),
+                        contentDescription = null,
+                        tint = Color.White,
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+                        val (avatarImage, shareButton) = createRefs()
+                        Image(
+                            modifier = Modifier
+                                .size(200.dp)
+                                .clip(CircleShape)
+                                .constrainAs(avatarImage) {
+                                    top.linkTo(parent.top)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                            painter = contact.imagePath.setImageByPath(R.drawable.ic_add_photo_white),
                             contentDescription = null,
-                            tint = Color.White,
+                            contentScale = ContentScale.Crop,
+                        )
+
+                        IconButton(
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(35.dp)
+                                .constrainAs(shareButton) {
+                                    top.linkTo(parent.top)
+                                    start.linkTo(avatarImage.end)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                            onClick = { context.shareText("${contact.firstName} ${contact.lastName}") }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_share),
+                                contentDescription = null,
+                                tint = TreePoppy,
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "${contact.firstName} ${contact.lastName}",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                    )
+                    if (contact.phoneNumber.number.isNotEmpty()) {
+                        Text(
+                            text = contact.phoneNumber.number,
+                            fontSize = 18.sp,
+                            color = Color.White,
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${contact.lastName} ${contact.firstName}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White,
-                )
-                if (contact.phoneNumber.number.isNotEmpty()) {
-                    Text(
-                        text = contact.phoneNumber.number,
-                        fontSize = 18.sp,
-                        color = Color.White,
+                Spacer(modifier = Modifier.height(24.dp))
+
+                val phone = contact.phoneNumber
+                val email = contact.emailAddress
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    InteractionItem(
+                        iconResId = R.drawable.ic_message,
+                        textResId = R.string.message,
+                        enabled = phone.number.isNotEmpty()
+                    ) {
+                        sendSms(number = phone.number, context = context)
+
+                    }
+                    InteractionItem(
+                        iconResId = R.drawable.ic_phone_call,
+                        textResId = R.string.call,
+                        enabled = phone.number.isNotEmpty()
+                    ) {
+                        makeCall(number = phone.number, context = context)
+                    }
+                    InteractionItem(
+                        iconResId = R.drawable.ic_mail,
+                        textResId = R.string.mail,
+                        enabled = email.link.isNotEmpty()
+                    ) {
+                        sendMail(email = email.link, context = context)
+                    }
+                }
+
+                val mainSection = mapOf(
+                    R.string.full_name to contact.fullName,
+                    R.string.gender to contact.gender.name,
+                    R.string.birthday to contact.birthday,
+                    R.string.occupation to contact.occupation,
+                ).filter { it.value.isNotEmpty() }
+                val showMainSection = mainSection.any { it.value.isNotEmpty() }
+
+                if (showMainSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(iconId = R.drawable.ic_person, textId = R.string.main)
+                    CardSection {
+                        SectionContactInformation(mainSection)
+                    }
+                }
+
+                val phoneSection = mapOf(
+                    R.string.phone_number to phone.number,
+                    R.string.label to phone.label,
+                    R.string.type to phone.type,
+                ).filter { it.value.isNotEmpty() }
+                val showPhoneSection = phoneSection.any { it.value.isNotEmpty() }
+
+                if (showPhoneSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(iconId = R.drawable.ic_phone, textId = R.string.phone_number_title)
+                    CardSection {
+                        SectionContactInformation(phoneSection)
+                    }
+                }
+
+                val address = contact.postalAddress
+                val addressSection = mapOf(
+                    R.string.street to address.street,
+                    R.string.city to address.city,
+                    R.string.region to address.region,
+                    R.string.neighborhood to address.neighborhood,
+                    R.string.post_code to address.postCode,
+                    R.string.country to address.country,
+                    R.string.label to address.label,
+                    R.string.type to address.type,
+                ).filter { it.value.isNotEmpty() }
+                val showAddressSection = addressSection.any { it.value.isNotEmpty() }
+
+                if (showAddressSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(
+                        iconId = R.drawable.ic_address,
+                        textId = R.string.postal_address_title
                     )
+                    CardSection {
+                        SectionContactInformation(addressSection)
+                    }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                val emailSection = mapOf(
+                    R.string.link to email.link,
+                    R.string.label to email.label,
+                    R.string.type to email.type,
+                ).filter { it.value.isNotEmpty() }
+                val showEmailSection = emailSection.any { it.value.isNotEmpty() }
 
-            val phone = contact.phoneNumber
-            val email = contact.emailAddress
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                InteractionItem(
-                    iconResId = R.drawable.ic_message,
-                    textResId = R.string.message,
-                    enabled = phone.number.isNotEmpty()
-                ) {
-                    sendSms(number = phone.number, context = context)
-
+                if (showEmailSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(
+                        iconId = R.drawable.ic_email_address, textId = R.string.email_address_title
+                    )
+                    CardSection {
+                        SectionContactInformation(emailSection)
+                    }
                 }
-                InteractionItem(
-                    iconResId = R.drawable.ic_phone_call,
-                    textResId = R.string.call,
-                    enabled = phone.number.isNotEmpty()
-                ) {
-                    makeCall(number = phone.number, context = context)
+
+                val organization = contact.organization
+                val organizationSection = mapOf(
+                    R.string.organization_name to organization.name,
+                    R.string.label to organization.label,
+                    R.string.job_title to organization.jobTitle,
+                    R.string.job_description to organization.jobDescription,
+                    R.string.department to organization.department,
+                ).filter { it.value.isNotEmpty() }
+                val showOrganizationSection = organizationSection.any { it.value.isNotEmpty() }
+
+                if (showOrganizationSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(iconId = R.drawable.ic_job, textId = R.string.organization_title)
+                    CardSection {
+                        SectionContactInformation(organizationSection)
+                    }
                 }
-                InteractionItem(
-                    iconResId = R.drawable.ic_mail,
-                    textResId = R.string.mail,
-                    enabled = email.link.isNotEmpty()
-                ) {
-                    sendMail(email = email.link, context = context)
+
+                val website = contact.website
+                val websiteSection = mapOf(
+                    R.string.link to website.link,
+                    R.string.label to website.label,
+                    R.string.type to website.type,
+                ).filter { it.value.isNotEmpty() }
+                val showWebsiteSection = websiteSection.any { it.value.isNotEmpty() }
+
+                if (showWebsiteSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(iconId = R.drawable.ic_web, textId = R.string.website_title)
+                    CardSection {
+                        SectionContactInformation(websiteSection)
+                    }
                 }
-            }
 
-            val mainSection = mapOf(
-                contact.fullName to R.string.full_name,
-                contact.gender.name to R.string.gender,
-                contact.birthday to R.string.birthday,
-                contact.occupation to R.string.occupation,
-            ).filter { it.key.isNotEmpty() }
-            val showMainSection = mainSection.any { it.key.isNotEmpty() }
+                val calendar = contact.calendar
+                val calendarSection = mapOf(
+                    R.string.link to calendar.link,
+                    R.string.label to calendar.label,
+                    R.string.type to calendar.type,
+                ).filter { it.value.isNotEmpty() }
+                val showCalendarSection = calendarSection.any { it.value.isNotEmpty() }
 
-            if (showMainSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(iconId = R.drawable.ic_person, textId = R.string.main)
-                CardSection {
-                    SectionContactInformation(mainSection)
+                if (showCalendarSection) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DetailsTitle(iconId = R.drawable.ic_calendar, textId = R.string.calendar_title)
+                    CardSection {
+                        SectionContactInformation(calendarSection)
+                    }
                 }
-            }
-
-            val phoneSection = mapOf(
-                phone.number to R.string.phone_number,
-                phone.label to R.string.label,
-                phone.type to R.string.type,
-            ).filter { it.key.isNotEmpty() }
-            val showPhoneSection = phoneSection.any { it.key.isNotEmpty() }
-
-            if (showPhoneSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(iconId = R.drawable.ic_phone, textId = R.string.phone_number_title)
-                CardSection {
-                    SectionContactInformation(phoneSection)
-                }
-            }
-
-            val address = contact.postalAddress
-            val addressSection = mapOf(
-                address.street to R.string.street,
-                address.city to R.string.city,
-                address.region to R.string.region,
-                address.neighborhood to R.string.neighborhood,
-                address.postCode to R.string.post_code,
-                address.country to R.string.country,
-                address.label to R.string.label,
-                address.type to R.string.type,
-            ).filter { it.key.isNotEmpty() }
-            val showAddressSection = addressSection.any { it.key.isNotEmpty() }
-
-            if (showAddressSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(iconId = R.drawable.ic_address, textId = R.string.postal_address_title)
-                CardSection {
-                    SectionContactInformation(addressSection)
-                }
-            }
-
-            val emailSection = mapOf(
-                email.link to R.string.link,
-                email.label to R.string.label,
-                email.type to R.string.type,
-            ).filter { it.key.isNotEmpty() }
-            val showEmailSection = emailSection.any { it.key.isNotEmpty() }
-
-            if (showEmailSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(
-                    iconId = R.drawable.ic_email_address, textId = R.string.email_address_title
-                )
-                CardSection {
-                    SectionContactInformation(emailSection)
-                }
-            }
-
-            val organization = contact.organization
-            val organizationSection = mapOf(
-                organization.name to R.string.organization_name,
-                organization.label to R.string.label,
-                organization.jobTitle to R.string.job_title,
-                organization.jobDescription to R.string.job_description,
-                organization.department to R.string.department,
-            ).filter { it.key.isNotEmpty() }
-            val showOrganizationSection = organizationSection.any { it.key.isNotEmpty() }
-
-            if (showOrganizationSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(iconId = R.drawable.ic_job, textId = R.string.organization_title)
-                CardSection {
-                    SectionContactInformation(organizationSection)
-                }
-            }
-
-            val website = contact.website
-            val websiteSection = mapOf(
-                website.link to R.string.link,
-                website.label to R.string.label,
-                website.type to R.string.type,
-            ).filter { it.key.isNotEmpty() }
-            val showWebsiteSection = websiteSection.any { it.key.isNotEmpty() }
-
-            if (showWebsiteSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(iconId = R.drawable.ic_web, textId = R.string.website_title)
-                CardSection {
-                    SectionContactInformation(websiteSection)
-                }
-            }
-
-            val calendar = contact.calendar
-            val calendarSection = mapOf(
-                calendar.link to R.string.link,
-                calendar.label to R.string.label,
-                calendar.type to R.string.type,
-            ).filter { it.key.isNotEmpty() }
-            val showCalendarSection = calendarSection.any { it.key.isNotEmpty() }
-
-            if (showCalendarSection) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DetailsTitle(iconId = R.drawable.ic_calendar, textId = R.string.calendar_title)
-                CardSection {
-                    SectionContactInformation(calendarSection)
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Button(
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 32.dp), onClick = {
-                        viewModel.onDeleteButtonClick(id)
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        .padding(vertical = 16.dp),
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    Text(
-                        text = stringResource(R.string.delete_contact),
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp,
-                    )
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp), onClick = {
+                            viewModel.onDeleteButtonClick(id)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.delete_contact),
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 18.sp,
+                        )
+                    }
                 }
             }
         }
