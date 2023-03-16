@@ -10,14 +10,16 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import ui.dendi.contacts.presentation.screen.contact_details.ContactDetailsScreen
 import ui.dendi.contacts.presentation.screen.contacts.ContactsScreen
 import ui.dendi.contacts.presentation.screen.create_contact.CreateContactScreen
 import ui.dendi.contacts.presentation.screen.edit_contact.EditContactScreen
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPermissionsApi::class)
 @Composable
-fun Navigator(snackbarHostState: SnackbarHostState) {
+fun Navigator(snackbarHostState: SnackbarHostState, permissionState: PermissionState) {
     val navController = rememberAnimatedNavController()
 
     AnimatedNavHost(
@@ -46,7 +48,11 @@ fun Navigator(snackbarHostState: SnackbarHostState) {
             CreateContactScreen(
                 snackbarHostState = snackbarHostState,
                 onNavigateToDetails = { id ->
-                    navController.navigate(Route.DETAILS + "/$id")
+                    navController.navigate(Route.DETAILS + "/$id") {
+                        popUpTo(Route.CREATE_CONTACT) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onCancelClick = {
                     navController.popBackStack()

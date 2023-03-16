@@ -95,7 +95,11 @@ dependencies {
     //Accompanist
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.27.0"
+    implementation "com.google.accompanist:accompanist-permissions:0.23.1"
 
     //Splashscreen
     implementation "androidx.core:core-splashscreen:1.0.0-beta02"
+
+    //libphonenumber
+    implementation "com.googlecode.libphonenumber:libphonenumber:8.2.0"
 }
